@@ -1,125 +1,160 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Play, CheckCircle2 } from "lucide-react"
+
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { CheckCircle, MenuIcon } from 'lucide-react'
+import Image from 'next/image'
+
 
 export default function Home() {
+
+  const plans = [
+    {
+      name: 'Free Plan',
+      description: 'Perfect for getting started',
+      price: '$0',
+      features: [
+        'Boost engagement with target responses',
+        'Automate comment replies to enhance audience interaction',
+        'Turn followers into customers with targeted messaging',
+      ],
+      cta: 'Get Started',
+    },
+    {
+      name: 'Smart AI Plan',
+      description: 'Advanced features for power users',
+      price: '$99',
+      features: [
+        'All features from Free Plan',
+        'AI-powered response generation',
+        'Advanced analytics and insights',
+        'Priority customer support',
+        'Custom branding options',
+      ],
+      cta: 'Upgrade Now',
+    },
+  ]
+
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-32">
-      {/* Background gradient */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-blue-600/20 to-emerald-500/20 blur-3xl" />
-      </div>
-
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-muted-foreground">Trusted by 1,000+ businesses</span>
-          </div>
-
-          {/* Heading */}
-          <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-            Automate your Instagram DMs and comments with{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">
-              AI
-            </span>
-          </h1>
-
-          {/* Subheading */}
-          <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
-            Replace your DM setters with a trained AI chatbot that closes leads while you sleep. 
-            Stop losing sales to slow responses.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button 
-              size="lg" 
-              asChild 
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-emerald-500 text-white hover:from-blue-700 hover:to-emerald-600"
-            >
-              <Link href="#pricing">
-                Start free
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
-              <Link href="#how-it-works">
-                <Play className="mr-2 h-4 w-4" />
-                Watch demo
-              </Link>
-            </Button>
-          </div>
-
-          {/* Trust indicators */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span>From startups to established brands</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span>5 minute setup</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero visual - Mock DM Interface */}
-        <div className="mt-16 sm:mt-20">
-          <div className="relative mx-auto max-w-4xl">
-            <div className="rounded-2xl border border-border bg-card p-2 shadow-2xl">
-              <div className="rounded-xl bg-muted/50 p-6">
-                <div className="flex items-center gap-4 border-b border-border pb-4">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-emerald-500" />
-                  <div>
-                    <p className="font-medium text-foreground">AI Assistant</p>
-                    <p className="text-sm text-muted-foreground">Active now</p>
-                  </div>
-                  <div className="ml-auto flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500">
-                    <span className="absolute h-3 w-3 animate-ping rounded-full bg-emerald-500/60" />
-                  </div>
+    <main>
+      <section className="relative bg-gradient-to-b from-slate-900 via-blue-900 to-bg">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+        <div className="relative">
+          <div className="container px-4 py-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 md:pl-4">
+                <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-bold">
+                  Gl
                 </div>
-                <div className="mt-6 space-y-4">
-                  <div className="flex justify-start">
-                    <div className="max-w-[80%] rounded-2xl rounded-bl-none bg-muted px-4 py-3">
-                      <p className="text-sm text-foreground">
-                        Hey! I saw your post about the new product. Is it still available?
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex justify-end">
-                    <div className="max-w-[80%] rounded-2xl rounded-br-none bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-3">
-                      <p className="text-sm text-white">
-                        Hi there! Yes, it's absolutely still available. Would you like me to send you the link to order? I can also answer any questions you have about it.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex justify-start">
-                    <div className="max-w-[80%] rounded-2xl rounded-bl-none bg-muted px-4 py-3">
-                      <p className="text-sm text-foreground">
-                        Yes please! What's the price?
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <div className="flex gap-1">
-                      <span className="h-2 w-2 animate-bounce-stagger rounded-full bg-blue-600" />
-                      <span className="h-2 w-2 animate-bounce-stagger rounded-full bg-blue-600" />
-                      <span className="h-2 w-2 animate-bounce-stagger rounded-full bg-blue-600" />
-                    </div>
-                    <span>AI is typing...</span>
-                  </div>
-                </div>
+                <span className="text-xl font-semibold text-primary-foreground">
+                  Glide
+                </span>
+              </div>
+              <nav className="hidden space-x-6 text-sm text-blue-200 md:block">
+                <Link href="#features">Features</Link>
+                <Link href="#pricing">Pricing</Link>
+                <Link href="#about">About</Link>
+              </nav>
+              <Button className="bg-white text-primary px-8 rounded-full md:mr-4 w-32">
+                <Link href="/dashboard">Login</Link>
+              </Button>
+            </div>
+
+            <div className="mx-auto mt-16 max-w-3xl text-center">
+              <h1 className="text-4xl font-bold leading-tight tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                Transform Your Instagram Engagement with Slide
+              </h1>
+
+              <p className="mt-6 text-lg text-blue-200">
+                Glide revolutionizes how you connect with your audience on
+                Instagram. Automate responses and boost engagement effortlessly,
+                turning interactions into valuable business opportunities.
+              </p>
+
+              <div className="mt-10 flex justify-center gap-6">
+                <Button
+                  size="lg"
+                  className="bg-blue-600 text-white hover:bg-blue-700 h-14 px-10 text-lg rounded-full"
+                >
+                  Get Started
+                </Button>
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  className="text-white hover:bg-blue-900/50 h-14 px-10 text-lg rounded-full border-none"
+                >
+                  Learn More
+                </Button>
               </div>
             </div>
+            <div className="relative h-40 md:h-80 w-full  mt-10">
+              <Image
+                src="/Ig-creators.png"
+                alt="Community member"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <section className="container w-full py-12 md:py-24 lg:py-32 bg-background">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+              Choose Your Plan
+            </h2>
+            <p className="max-w-[900px] text-muted-foreground">
+              Select the perfect plan to boost your Instagram engagement
+            </p>
+          </div>
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 mt-8 md:grid-cols-2 md:gap-8">
+            {plans.map((plan, index) => (
+              <Card
+                key={index}
+                className="flex flex-col justify-between"
+              >
+                <CardHeader>
+                  <CardTitle>{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  <div className="text-4xl font-bold">
+                    {plan.price}
+                    <span className="text-lg font-normal text-muted-foreground">
+                      /month
+                    </span>
+                  </div>
+                  <ul className="space-y-2">
+                    {plan.features.map((feature, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center"
+                      >
+                        <CheckCircle className="mr-2 h-4 w-4 text-primary" />
+                        <span className="text-sm text-muted-foreground">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full">{plan.cta}</Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }
