@@ -5,6 +5,9 @@ import { LogoSmall } from '@/svgs/logo-small'
 import Items from './items'
 import { Separator } from '@/components/ui/separator'
 import { HelpDuoToneWhite } from '@/icons'
+import ClerkAuthState from '../clerk-auth-state'
+import { SubscriptionPlan } from '../subscription-plan'
+import UpgradeCard from './upgrade'
 
 
 type Props = {
@@ -46,6 +49,12 @@ const Sidebar = ({ slug }: Props) => {
                         <p className='text-[#989CA0'>Help</p>
                     </div>
                 </div>
+
+                <SubscriptionPlan type="FREE" >
+                    <div className='flex-1 flex flex-col justify-end'>
+                        <UpgradeCard/>
+                    </div>
+                </SubscriptionPlan>
 
             </div>
         </div>
