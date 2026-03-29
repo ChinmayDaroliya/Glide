@@ -17,7 +17,7 @@ import CreateAutomation from '../create-automation'
 import { Notifications } from '../notifications'
 import MainBreadCrumb from '../main-bread-crumb'
 
-type Props = {
+type Props = {  
     slug: string
 }
 
