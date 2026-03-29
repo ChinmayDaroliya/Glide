@@ -1,4 +1,4 @@
-import { HomeDuoToneWhite, AutomationDuoToneWhite, RocketDuoToneWhite, SettingsDuoToneWhite } from '@/icons'
+import { HomeDuoToneWhite, AutomationDuoToneWhite, RocketDuoToneWhite, SettingsDuoToneWhite, ContactsDuoToneWhite } from '@/icons'
 import { v4 as uuid } from 'uuid'
 
 type FieldProps = {
@@ -15,6 +15,11 @@ export const SIDEBAR_MENU: SideBarProps[] = [
         id: uuid(),
         label: 'home',
         icon: <HomeDuoToneWhite />
+    },
+    {
+        id: uuid(),
+        label: 'contacts',
+        icon: <ContactsDuoToneWhite/>
     },
     {
         id: uuid(),

@@ -12,7 +12,7 @@ const Items = ({ page, slug }: Props) => {
     return SIDEBAR_MENU.map((items) => (
         <Link key={items.id}
             href={`/dashboard/${slug}/${items.label === 'home' ? '/' : items.label}`}
-            className={cn('capitalize flex gap-x-2 rounded-full p-3',
+            className={cn('capitalize flex gap-x-2 rounded-full p-3 hover:bg-white/10 transition-colors duration-200 rounded-lg',
                 page === items.label && 'bg-[#0f0f0f]',
                 page === slug && items.label === 'home' ? 'bg-[#0f0f0f]' : 'text-[#989CA0]'
             )}

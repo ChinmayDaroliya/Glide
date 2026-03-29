@@ -28,23 +28,26 @@ const Sidebar = ({ slug }: Props) => {
                     <LogoSmall />
                 </div>
 
-                <div className='flex flex-col py-3'>
+                <div className='flex flex-col py-3 '>
                     <Items page={page} slug={slug} />
                 </div>
 
-                <div className='px-16'>
+                <div className='px-16 '>
                     <Separator
                         orientation='horizontal'
                         className='bg-[#5C5C5F]'
                     />
                 </div>
 
-                <div className='px-3 flex flex-col gap-y-5'>
-                    <div className='flex gap-x-2'>
+                <div className='px-3 flex flex-col gap-y-3'>
+                    <div className='flex items-center gap-x-2 p-2 rounded-lg cursor-pointer
+                        hover:bg-white/10 transition-colors duration-200'>
                         <ClerkAuthState />
                         <p className='text-[#989CA0]'>Profile</p>
                     </div>
-                    <div className='flex gap-x-3'>
+
+                    <div className='flex items-center gap-x-3 p-2 rounded-lg cursor-pointer
+                        hover:bg-white/10 transition-colors duration-200'>
                         <HelpDuoToneWhite />
                         <p className='text-[#989CA0]'>Help</p>
                     </div>
