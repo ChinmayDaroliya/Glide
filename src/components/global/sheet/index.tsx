@@ -1,6 +1,8 @@
 import React from 'react'
 import {Sheet as ShadcnSheet, 
     SheetContent,
+    SheetDescription,
+    SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet'  
 
@@ -18,6 +20,15 @@ const Sheet = ({children, trigger, className, side}: Props) => {
         {trigger}
     </SheetTrigger>
     <SheetContent className='p-0' side={side}>
+
+      <SheetTitle className='sr-only'>
+        Menu
+      </SheetTitle>
+
+      <SheetDescription className="sr-only">
+          Sidebar navigation for dashboard
+      </SheetDescription>
+      
       {children}
     </SheetContent>
   </ShadcnSheet>

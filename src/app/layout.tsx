@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import {  Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Glide",
-  description: "Automation for Instagram",
+  description: "Automate Dm's and comments on Instagram",
 };
 
 export default function RootLayout({
@@ -20,9 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html suppressHydrationWarning lang="en" className={cn("font-sans", geist.variable)}>
+      <html suppressHydrationWarning lang="en">
 
-        <body suppressHydrationWarning className={geist.className}>
+        <body suppressHydrationWarning className={jakarta.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

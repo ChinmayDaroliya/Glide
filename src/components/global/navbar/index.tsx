@@ -2,7 +2,8 @@
 
 import { PAGE_BREAD_CRUMBS } from '@/constants/pages'
 import { usePaths } from '@/hooks/user-nav'
-import { Menu } from 'lucide-react'
+import { Menu} from 'lucide-react'
+import Search from '../search'
 import React from 'react'
 import Sheet from '../sheet'
 import Items from '../sidebar/items'
@@ -12,6 +13,9 @@ import { HelpDuoToneWhite } from '@/icons'
 import { SubscriptionPlan } from '../subscription-plan'
 import UpgradeCard from '../sidebar/upgrade'
 import { LogoSmall } from '@/svgs/logo-small'
+import CreateAutomation from '../create-automation'
+import { Notifications } from '../notifications'
+import MainBreadCrumb from '../main-bread-crumb'
 
 type Props = {
     slug: string
@@ -21,7 +25,9 @@ const NavBar = ({slug} : Props) => {
     const {page} = usePaths()
     const currentPage = PAGE_BREAD_CRUMBS.includes(page) || page == slug
   
-    return currentPage && <div className='flex flex-col'>
+    return( 
+    currentPage && (
+    <div className='flex flex-col'>
         <div className='flex gap-x-3 lg:gap-x-5 justify-end'>
             <span className='lg:hidden flex items-center flex-1 gap-x-2'>
                 <Sheet
@@ -64,8 +70,17 @@ const NavBar = ({slug} : Props) => {
 
                 </Sheet>
             </span>
+
+            <Search/>
+            <CreateAutomation/>
+            <Notifications/>
+
         </div>
+
+        <MainBreadCrumb page ={page === slug ? 'Home' : page} slug={slug} />
     </div>
+    )
+)
   
 }
 

@@ -22,6 +22,7 @@ const Layout = async ({ children, params }: Props) => {
         {/* Navbar */}
         <div className='lg:ml-[250px] lg:pl-10 lg:py-5 flex flex-col overflow-auto'>
             <NavBar slug={slug}/>
+            {children}
         </div>
     </div>
 
