@@ -46,7 +46,7 @@ const Sidebar = ({ slug }: Props) => {
                     </div>
                     <div className='flex gap-x-3'>
                         <HelpDuoToneWhite />
-                        <p className='text-[#989CA0'>Help</p>
+                        <p className='text-[#989CA0]'>Help</p>
                     </div>
                 </div>
 
