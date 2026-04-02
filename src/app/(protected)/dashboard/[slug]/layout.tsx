@@ -1,5 +1,6 @@
 
 
+import { QueryClient } from '@tanstack/react-query'
 import NavBar from '@/components/global/navbar'
 import Sidebar from '@/components/global/sidebar'
 import React from 'react'
@@ -13,6 +14,11 @@ const Layout = async ({ children, params }: Props) => {
 
     // Query client
     // WIP Query client and fetch data
+
+    const query = new QueryClient()
+
+    
+    
     const { slug } = await params
 
     return <div className='p-3'>
