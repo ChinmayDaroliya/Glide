@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getAllAutomations } from "@/actions/automations"
+import { getAllAutomations, getAutomationInfo } from "@/actions/automations"
 
 export const useQueryAutomations = () => {
     return useQuery({
@@ -7,4 +7,11 @@ export const useQueryAutomations = () => {
         queryFn: getAllAutomations,
 })
 
+}
+
+export const useQueryAutomation = (id:string) => {
+    return useQuery({
+        queryKey: ['automation-info'],
+        queryFn: () => getAutomationInfo(id),
+    })
 }

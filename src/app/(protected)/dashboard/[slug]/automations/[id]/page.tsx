@@ -1,18 +1,34 @@
+import { getAutomationInfo } from '@/actions/automations'
 import Trigger from '@/components/global/automations/trigger'
 import AutomationsBreadCrumb from '@/components/global/bread-crumbs/automations'
 import { Warning } from '@/icons'
+import { prefetchUserAutomation } from '@/react-query/prefetch'
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import React from 'react'
 
 type Props = {
     params: {id: string}
 }
 
-// WIP set some metadat stuff
 
-const Page = ({params}: Props) => {
-    // WIP prefetch the user automation data 
+export async function generateMetaData({params}: {params:{
+    id:string
+}}){
+    const info = await getAutomationInfo(params.id)
+
+    return {
+        title: info.data?.name,
+    }
+}
+
+const Page = async ({params}: Props) => {
+    const query = new QueryClient()
+
+    await prefetchUserAutomation(query, params.id)
+
 
   return (
+    <HydrationBoundary state={dehydrate(query)}>
     <div className='flex flex-col items-center gap-y-20'>
         <AutomationsBreadCrumb id={params.id}/>
         <div className='w-full lg:w-10/12 xl:w-6/12 p-5 rounded-xl flex flex-col bg-[#1D1D1D]
@@ -24,6 +40,7 @@ const Page = ({params}: Props) => {
             <Trigger id={params.id}/>
         </div>
     </div>
+    </HydrationBoundary>
   )
 }
 
