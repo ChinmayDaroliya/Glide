@@ -62,14 +62,14 @@ export const updateAutomation= async (
     id:string,
     update:{
         name?:string,
-        acive?:boolean,
+        active?:boolean,
     }
 ) => {
     return await client.automation.update({
         where:{id},
         data:{
             name:update.name,
-            active:update.acive,
+            active:update.active,
         }
     })
 }
@@ -120,5 +120,26 @@ export const addTrigger = async (automationId:string, trigger:string[]) => {
                 }
             }
         }
+    })
+}
+
+export const addKeyWord = async (automationId:string, keyword:string) => {
+    return client.automation.update({
+        where:{
+            id:automationId,
+        },
+        data:{
+            keywords:{
+                create:{
+                    word:keyword,
+                },
+            },
+        },
+    })
+}
+
+export const deleteKeywordQuery = async (id:string) => {
+    return client.keyword.delete({
+        where:{ id}
     })
 }

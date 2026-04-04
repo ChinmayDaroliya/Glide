@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import ReduxProvider from "@/providers/redux-provider";
+import Script from 'next/script';
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'] });
 
