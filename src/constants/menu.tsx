@@ -16,11 +16,11 @@ export const SIDEBAR_MENU: SideBarProps[] = [
         label: 'home',
         icon: <HomeDuoToneWhite />
     },
-    {
-        id: uuid(),
-        label: 'contacts',
-        icon: <ContactsDuoToneWhite/>
-    },
+    // {
+    //     id: uuid(),
+    //     label: 'contacts',
+    //     icon: <ContactsDuoToneWhite/>
+    // },
     {
         id: uuid(),
         label: 'automations',

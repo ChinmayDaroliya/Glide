@@ -23,7 +23,7 @@ const PostButton = ({id}:Props) => {
             {data?.status === 200 ? (
                 <div className='flex flex-col gap-y-3 w-full'>
                     <div className='flex flex-wrap full gap-3'>
-                        {data.data.data.map((post:InstagramPostProps) => (
+                        {data?.data?.data?.map((post:InstagramPostProps) => (
                             <div className='relative w-4/12 aspect-square rounded-lg cursor-pointer overflow-hidden'
                                 key={post.id}
                                 onClick={() => 
@@ -45,7 +45,7 @@ const PostButton = ({id}:Props) => {
                                     <Image
                                         fill
                                         sizes='100vw'
-                                        src={post.media_url}
+                                        src={post.media_url || "/placeholder.png"}
                                         alt='post image'
                                         className={cn(
                                             'hover:opacity-75 transition duration-100',

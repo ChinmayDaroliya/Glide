@@ -1,5 +1,5 @@
 import { createChatHistory, getChatHistory, getKeywordAutomation, getKeywordPost, matchKeyword, trackResponses } from "@/actions/webhook/queries";
-import { sendDM } from "@/lib/fetch";
+import { sendDM, sendPrivateMessage } from "@/lib/fetch";
 import { NextRequest, NextResponse } from "next/server";
 import { openai } from '@/lib/openai'
 import { client } from "@/lib/prisma";
@@ -131,9 +131,9 @@ export async function POST(req:NextRequest){
                 if(automation && automations_post && automation.trigger){
                     if(automation.listener){
                         if(automation.listener.listener === 'MESSAGE'){
-                            const direct_message = await sendDM(
+                            const direct_message = await sendPrivateMessage(
                                 webhook_payload.entry[0].id,
-                                webhook_payload.entry[0].changes[0].value.from.id,
+                                webhook_payload.entry[0].changes[0].value.id,
                                 automation.listener?.prompt,
                                 automation.User?.integrations[0].token!
                             )
@@ -180,9 +180,9 @@ export async function POST(req:NextRequest){
 
                                 await client.$transaction([reciever, sender])
 
-                                const direct_message = await sendDM(
+                                const direct_message = await sendPrivateMessage(
                                     webhook_payload.entry[0].id,
-                                    webhook_payload.entry[0].changes[0].value.from.id,
+                                    webhook_payload.entry[0].changes[0].value.id,
                                     smart_ai_message.choices[0].message.content,
                                     automation.User?.integrations[0].token!
                                 )
@@ -275,7 +275,7 @@ export async function POST(req:NextRequest){
                 {
                     message:'No automation set'
                 },
-                {status: 404}
+                {status: 200}
             )
         }
 
@@ -284,7 +284,7 @@ export async function POST(req:NextRequest){
                 message: 'No automation set',
             },
             {
-                status:404
+                status:200
             }
         )
 
@@ -294,7 +294,7 @@ export async function POST(req:NextRequest){
                 message: 'No automation set'
             },
             {
-                status: 500
+                status: 200
             }
         )
     }

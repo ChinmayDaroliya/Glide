@@ -1,7 +1,5 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-
-
 import {
   Card,
   CardContent,
@@ -10,12 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { CheckCircle, MenuIcon } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import Image from 'next/image'
 
-
 export default function Home() {
-
   const plans = [
     {
       name: 'Free Plan',
@@ -45,32 +41,35 @@ export default function Home() {
 
   return (
     <main>
-      <section className="relative bg-gradient-to-b from-slate-900 via-blue-900 to-bg">
+      <section className="relative bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
         <div className="relative">
           <div className="container px-4 py-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 md:pl-4">
-                <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-bold">
+                <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-bold text-blue-900">
                   Gl
                 </div>
-                <span className="text-xl font-semibold text-primary-foreground">
+                <span className="text-xl font-semibold text-white">
                   Glide
                 </span>
               </div>
               <nav className="hidden space-x-6 text-sm text-blue-200 md:block">
-                <Link href="#features">Features</Link>
-                <Link href="#pricing">Pricing</Link>
-                <Link href="#about">About</Link>
+                <Link href="#features" className="hover:text-white transition-colors">Features</Link>
+                <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
+                <Link href="#about" className="hover:text-white transition-colors">About</Link>
               </nav>
-              <Button className="bg-white text-primary px-8 rounded-full md:mr-4 w-32">
+              <Button 
+                variant="outline" 
+                className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 hover:text-white rounded-full md:mr-4 w-32"
+              >
                 <Link href="/dashboard">Login</Link>
               </Button>
             </div>
 
             <div className="mx-auto mt-16 max-w-3xl text-center">
               <h1 className="text-4xl font-bold leading-tight tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                Transform Your Instagram Engagement with Slide
+                Transform Your Instagram Engagement with Glide
               </h1>
 
               <p className="mt-6 text-lg text-blue-200">
@@ -82,20 +81,20 @@ export default function Home() {
               <div className="mt-10 flex justify-center gap-6">
                 <Button
                   size="lg"
-                  className="bg-blue-600 text-white hover:bg-blue-700 h-14 px-10 text-lg rounded-full"
+                  className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all h-14 px-10 text-lg rounded-full"
                 >
                   Get Started
                 </Button>
                 <Button
                   size="lg"
-                  variant="ghost"
-                  className="text-white hover:bg-blue-900/50 h-14 px-10 text-lg rounded-full border-none"
+                  variant="outline"
+                  className="bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 hover:border-white/50 h-14 px-10 text-lg rounded-full"
                 >
                   Learn More
                 </Button>
               </div>
             </div>
-            <div className="relative h-40 md:h-80 w-full  mt-10">
+            <div className="relative h-40 md:h-80 w-full mt-10 rounded-2xl overflow-hidden shadow-2xl">
               <Image
                 src="/Ig-creators.png"
                 alt="Community member"
