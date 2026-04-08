@@ -7,7 +7,9 @@ import GradientButton from '../gradient-button'
 import { Button } from '@/components/ui/button'
 import { useQueryAutomations } from '@/hooks/user-queries'
 import CreateAutomation from '../create-automation'
-import { useMutationDataState } from '@/hooks/use-mutation-data'
+import { useMutationData, useMutationDataState } from '@/hooks/use-mutation-data'
+import { Trash2 } from 'lucide-react'
+import { deleteAutomationAction } from '@/actions/automations'
 
 
 type Props = {}
@@ -19,16 +21,22 @@ const AutomationList = (props: Props) => {
 
     const {latestVariable} = useMutationDataState(['create-automation'])    
     
+    // Add delete automation hook
+    const {mutate: deleteAutomation} = useMutationData(
+        ['delete-automation'],
+        (data: {id: string}) => deleteAutomationAction(data.id),
+        'user-automations'
+    )
     
     const {pathname} = usePaths()
 
     const optimisticUiData = useMemo(() => {
         if ((latestVariable && latestVariable?.variables &&  data)) {
-        const test = [latestVariable.variables, ...data.data]
-        return { data: test }
+            const test = [latestVariable.variables, ...data.data]
+            return { data: test }
         }
         return data || { data: [] }
-  }, [latestVariable, data])
+    }, [latestVariable, data])
 
     
     if(!data || data?.status !== 200 || data.data.length <= 0){
@@ -95,18 +103,28 @@ const AutomationList = (props: Props) => {
               {automation.createdAt.getUTCFullYear()}
             </p>
 
-            {automation.listener?.listener === 'SMARTAI' ? (
-              <GradientButton
-                type="BUTTON"
-                className="w-full bg-background-80 text-white hover:bg-background-80"
+            <div className="flex items-center gap-x-2">
+              {automation.listener?.listener === 'SMARTAI' ? (
+                <GradientButton
+                  type="BUTTON"
+                  className="w-full bg-background-80 text-white hover:bg-background-80"
+                >
+                  Smart AI
+                </GradientButton>
+              ) : (
+                <Button className="bg-background-80 hover:bg-background-80 text-white">
+                  Standard
+                </Button>
+              )}
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => deleteAutomation({id: automation.id})}
+                className="ml-2"
               >
-                Smart AI
-              </GradientButton>
-            ) : (
-              <Button className="bg-background-80 hover:bg-background-80 text-white">
-                Standard
+                <Trash2 size={16} />
               </Button>
-            )}
+            </div>
           </div>
         </Link>
       ))}

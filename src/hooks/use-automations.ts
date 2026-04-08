@@ -35,10 +35,17 @@ export const useEditAutomation = (automationId:string) => {
 
 
     useEffect(()=>{
+        // added
+        if (edit && inputRef.current) {
+            inputRef.current.focus()
+            inputRef.current.select()
+        }
+ 
+
         function handleClickOutside(this:Document, event:MouseEvent){
-            if(inputRef.current && inputRef.current.contains(event.target as Node | null )){
-                if(inputRef.current.value !== ""){
-                    mutate({name: inputRef.current.value})
+            if(inputRef.current && !inputRef.current.contains(event.target as Node )){
+                if(inputRef.current.value.trim() !== ""){
+                    mutate({name: inputRef.current.value.trim()})
                 }else{
                     disableEdit()
                 }
@@ -49,14 +56,16 @@ export const useEditAutomation = (automationId:string) => {
         return () => {
             document.removeEventListener('mousedown',handleClickOutside)
         }
-    },[])
+// added all 3 
+    },[edit , mutate, disableEdit])
 
     return {
         edit,
         enableEdit,
         disableEdit,
         inputRef,
-        isPending
+        isPending,
+        mutate
     }
 } 
 

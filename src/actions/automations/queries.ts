@@ -166,3 +166,11 @@ export const addPost = async (
         }
     })
 }
+
+export const deleteAutomation = async (automationId: string) => {
+    return await client.automation.delete({
+        where: {
+            id: automationId,
+        },
+    })
+}

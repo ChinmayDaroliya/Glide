@@ -2,7 +2,7 @@
 
 import { onCurrentUser } from "../user"
 import { findUser } from "../user/queries"
-import { addKeyWord, addListener, addPost, addTrigger, createAutomation, deleteKeywordQuery, findAutomation, getAutomations, updateAutomation } from "./queries"
+import { addKeyWord, addListener, addPost, addTrigger, createAutomation, deleteAutomation, deleteKeywordQuery, findAutomation, getAutomations, updateAutomation } from "./queries"
 
 export const createAutomations = async (id?: string) => {
     const user = await onCurrentUser()
@@ -177,5 +177,16 @@ export const activateAutomation = async (id: string, state: boolean) => {
         return {status:404, data: ' Automation not found'}
     } catch (error) {
         return {status:500, data:'Oops! something went wrong '}
+    }
+}
+
+export const deleteAutomationAction = async (automationId: string) => {
+    await onCurrentUser()
+    try {
+        const deleted = await deleteAutomation(automationId)
+        if (deleted) return {status: 200, data: "Automation deleted successfully"}
+        return {status: 404, data: "Automation not found"}
+    } catch (error) {
+        return {status: 500, data: "Oops! something went wrong"}
     }
 }
