@@ -6,11 +6,11 @@ type Props = {}
 
 const MetricsCard = (props: Props) => {
   const { data } = useQueryAutomations()
-  const comments = data?.data.reduce((current, next) => {
+  const comments = data?.data.reduce((current: number, next: any) => {
     return current + next.listener?.commentCount!
   }, 0)
 
-  const dms = data?.data?.reduce((current, next) => {
+  const dms = data?.data?.reduce((current: number, next: any) => {
     return current + next.listener?.dmCount!
   }, 0)
 

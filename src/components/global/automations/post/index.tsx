@@ -35,7 +35,7 @@ const PostButton = ({id}:Props) => {
                                     })
                                 }
                             >
-                                {posts.find((p) => p.postid === post.id) && (
+                                {posts.find((p: any) => p.postid === post.id) && (
                                     <CheckCircle
                                         fill='white'
                                         stroke='black'
@@ -49,7 +49,7 @@ const PostButton = ({id}:Props) => {
                                         alt='post image'
                                         className={cn(
                                             'hover:opacity-75 transition duration-100',
-                                            posts.find((p) => p.postid === post.id) && 'opacity-75'
+                                            posts.find((p: any) => p.postid === post.id) && 'opacity-75'
                                         )}
                                     />
                             </div>

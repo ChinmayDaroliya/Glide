@@ -29,7 +29,7 @@ const Keywords = ({id}: Props) => {
         {data?.data?.keywords &&  
           data?.data?.keywords.length > 0 && 
           data?.data?.keywords.map(
-            (word) => (
+            (word: any) => (
               (!latestVariable?.variables?.id || word.id !== latestVariable.variables.id) && (
               <div key={word.id}
                 className='bg-background-90 flex items-center gap-x-2 capitalize text-text-secondary

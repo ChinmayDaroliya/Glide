@@ -64,7 +64,7 @@ const Trigger = ({id}: Props) => {
           onClick={() => onSetTrigger(trigger.type)}
           className={cn(
             'hover:opacity-80 text-white rounded-xl flex cursor-pointer flex-col p-3 gap-y-2',
-            !types?.find((t) => t === trigger.type)
+            !types?.find((t: any) => t === trigger.type)
               ? 'bg-background-80'
               : 'bg-gradient-to-br from-[#3352CC] font-medium to-[#1C2D70]'
           )}
