@@ -12,8 +12,8 @@ export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
     }
 }
 
-export const onIntegrate = async(code: string) => {
-    const user = await onCurrentUser()
+export const onIntegrate = async(code: string, userId?: string) => {
+    const user = userId ? { id: userId } : await onCurrentUser()
     try {
         const integration = await getIntegration(user.id)
         if(integration && integration.integrations.length === 0){
