@@ -13,7 +13,8 @@ const Page = async({searchParams:{code}}: Props) => {
         console.log(code)
         const user = await onIntegrate(code.split("#_")[0])
         if(user.status === 200){
-            return redirect(`/dashboard/${user.data?.firstname}${user.data?.lastname}/integrations`)
+            const fullName = user.data?.firstname + (user.data?.lastname ? user.data.lastname : '')
+            return redirect(`/dashboard/${fullName}/integrations`)
         }
     }
 

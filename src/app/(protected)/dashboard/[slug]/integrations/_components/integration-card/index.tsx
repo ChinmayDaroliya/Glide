@@ -44,7 +44,6 @@ const IntegrationCard = ({title,description,icon,strategy}: Props) => {
             to-[#1C2D70] hover:opacity-70 transition duration-100'
         >
             {integrated ? 'Connected':'Connect'}
-            Connect
         </Button>
     </div>
   )

@@ -11,12 +11,12 @@ type Props = {
 export const INTEGRATION_CARD: Props[] = [
     {
         title: 'Connect Instagram',
-        description: 'lorem ipsum dolor sit',
+        description: 'Connect your Instagram account to enable automated responses and engagement with your followers',
         icon: <InstagramDuoToneBlue/>,
         strategy: 'INSTAGRAM',
     },{
         title: 'Connect Salesforce',
-        description: 'lorem ipsum dolor sit',
+        description: 'Integrate Salesforce CRM to manage customer relationships and automate sales processes',
         icon: <SalesForceDuoToneBlue/>,
         strategy: 'CRM',
     }
