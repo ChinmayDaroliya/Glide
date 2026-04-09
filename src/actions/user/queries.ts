@@ -1,24 +1,26 @@
 'use server'
 
-import { client } from "@/lib/prisma"
+import type { UserWithProfile } from '@/lib/prisma-payloads'
+import { client } from '@/lib/prisma'
 
-export const findUser = async (clerkId: string) => {
-    return await client.user.findUnique({
-            where:{
-                clerkId
+export const findUser = async (
+    clerkId: string
+): Promise<UserWithProfile | null> => {
+    const row = await client.user.findUnique({
+        where: { clerkId },
+        include: {
+            subscription: true,
+            integrations: {
+                select: {
+                    id: true,
+                    token: true,
+                    expiresAt: true,
+                    name: true,
+                },
             },
-            include:{
-                subscription: true,
-                integrations: {
-                    select:{
-                        id: true,
-                        token: true,
-                        expiresAt: true,
-                        name: true,
-                    }
-                }
-            }
+        },
     })
+    return row as UserWithProfile | null
 }
 
 export const createUser = async (

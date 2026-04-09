@@ -1,5 +1,7 @@
 "use server"
-import {client} from '../../lib/prisma'
+
+import type { UserWithInstagramIntegrations } from '@/lib/prisma-payloads'
+import { client } from '../../lib/prisma'
 
 export const updateIntegrations = async (token:string, expire:Date, id:string) => {
     return await client.integrations.update({
@@ -11,19 +13,20 @@ export const updateIntegrations = async (token:string, expire:Date, id:string) =
     })
 }
 
-export const getIntegration = async (clerkId: string) => {
-    return await client.user.findUnique({
-        where:{
-            clerkId
+export const getIntegration = async (
+    clerkId: string
+): Promise<UserWithInstagramIntegrations | null> => {
+    const row = await client.user.findUnique({
+        where: { clerkId },
+        select: {
+            integrations: {
+                where: {
+                    name: 'INSTAGRAM',
+                },
+            },
         },
-        select:{ 
-            integrations:{
-                where:{
-                    name:'INSTAGRAM'
-                }
-            }
-        }
     })
+    return row as UserWithInstagramIntegrations | null
 }
 
 export const createIntegration = async (
