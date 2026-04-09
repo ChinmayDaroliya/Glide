@@ -127,9 +127,21 @@ export const getProfilePosts = async() => {
     const user = await onCurrentUser()
     try {
         const profile = await findUser(user.id)
+        
+        if (!profile || !profile.integrations || profile.integrations.length === 0) {
+            console.log("No Instagram integration found")
+            return {status:404, message: "No Instagram integration found"}
+        }
+        
+        const token = profile.integrations[0].token
+        if (!token) {
+            console.log("No access token found")
+            return {status:404, message: "No access token found"}
+        }
+        
         const posts = await fetch(
             `${process.env.INSTAGRAM_BASE_URL}/me/media?fields=id,caption,media_url,media_type,
-              timestamp&limit=10&access_token=${profile?.integrations[0].token} `
+              timestamp&limit=10&access_token=${token} `
         )
         const parsed = await posts.json()
         if(parsed) return {status:200, data:parsed}
@@ -141,7 +153,6 @@ export const getProfilePosts = async() => {
         return {status:500}
 
     }
-
 }
 
 export const savePosts = async(
