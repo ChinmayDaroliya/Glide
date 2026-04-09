@@ -18,19 +18,15 @@ export const createAutomation = async (clerkId:string, id? : string) => {
     })
 }
 
-export const getAutomations = async (clerkId:string) => {
-    return await client.user.findUnique({
-        where:{
-            clerkId,
-        },
-        select:{
-            automations:{
-                orderBy:{
-                    createdAt:"asc",
-                },
-                include:{
+export const getAutomations = async (clerkId: string) => {
+    return client.user.findUnique({
+        where: { clerkId },
+        include: {
+            automations: {
+                orderBy: { createdAt: 'asc' },
+                include: {
                     keywords: true,
-                    listener: true
+                    listener: true,
                 },
             },
         },

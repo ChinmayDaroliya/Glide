@@ -22,9 +22,11 @@ export const getAllAutomations = async () => {
     const user= await onCurrentUser()
 
     try {
-        const automations = await getAutomations(user.id)
+        const userWithAutomations = await getAutomations(user.id)
 
-        if(automations) return {status:200, data:automations.automations }
+        if (userWithAutomations?.automations) {
+            return { status: 200, data: userWithAutomations.automations }
+        }
 
         return {status:404, data: []}
     } catch (error) {
