@@ -3,20 +3,45 @@ import { verifyInstagramOAuthState } from '@/lib/oauth-state'
 import { currentUser } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
+/** Avoid Edge quirks; OAuth + Prisma run on Node. */
+export const runtime = 'nodejs'
+
 function redirectTo(request: NextRequest, path: string) {
   const target = new URL(path, request.nextUrl.origin)
-  return NextResponse.redirect(target)
+  return NextResponse.redirect(target, 302)
+}
+
+function parseOAuthParams(request: NextRequest) {
+  const fromRequestUrl = new URL(request.url)
+  let code = fromRequestUrl.searchParams.get('code')
+  let state = fromRequestUrl.searchParams.get('state')
+  let error = fromRequestUrl.searchParams.get('error')
+  let errorDescription = fromRequestUrl.searchParams.get('error_description')
+
+  // Vercel / proxies sometimes expose the original query on forwarded headers
+  if (!code && !error) {
+    const forwarded = request.headers.get('x-forwarded-uri')
+    if (forwarded) {
+      try {
+        const u = new URL(forwarded, request.nextUrl.origin)
+        code = u.searchParams.get('code')
+        state = state ?? u.searchParams.get('state')
+        error = error ?? u.searchParams.get('error')
+        errorDescription = errorDescription ?? u.searchParams.get('error_description')
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  return { code, state, error, errorDescription, href: fromRequestUrl.toString() }
 }
 
 export async function GET(request: NextRequest) {
-  const url = request.nextUrl.clone()
-  const code = url.searchParams.get('code')
-  const state = url.searchParams.get('state')
-  const error = url.searchParams.get('error')
-  const errorDescription = url.searchParams.get('error_description')
+  const { code, state, error, errorDescription, href } = parseOAuthParams(request)
 
   console.log('=== OAUTH CALLBACK (route) ===')
-  console.log('OAuth Callback: full URL:', url.toString())
+  console.log('OAuth Callback: full URL:', href)
   console.log('OAuth Callback: Received code:', code ? 'YES' : 'NO')
 
   if (error) {
