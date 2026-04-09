@@ -19,6 +19,8 @@ export const getIntegration = async (
     const row = await client.user.findUnique({
         where: { clerkId },
         select: {
+            firstname: true,
+            lastname: true,
             Integrations: {
                 where: {
                     name: 'INSTAGRAM',

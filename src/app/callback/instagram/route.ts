@@ -8,7 +8,7 @@ export const runtime = 'nodejs'
 
 function redirectTo(request: NextRequest, path: string) {
   const target = new URL(path, request.nextUrl.origin)
-  return NextResponse.redirect(target, 302)
+  return NextResponse.redirect(target, { status: 302 })
 }
 
 function parseOAuthParams(request: NextRequest) {

@@ -6,6 +6,8 @@ import type { Prisma } from '@prisma/client'
  */
 
 export interface UserWithInstagramIntegrations {
+  firstname: string | null
+  lastname: string | null
   Integrations: Array<{
     id: string
     token: string

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation"
 import { currentUser } from "@clerk/nextjs/server"
 import { onCurrentUser } from "../user"
-import { createIntegration, getIntegration } from "./query"
+import { createIntegration, getIntegration, updateIntegrations } from "./query"
 import { generateTokens } from "@/lib/fetch"
 import { signInstagramOAuthState } from "@/lib/oauth-state"
 import axios from "axios"
@@ -89,7 +89,34 @@ export const onIntegrate = async(code: string, userId?: string) => {
             console.log("onIntegrate: Token generation failed")
             return {status: 401}
         }
-        console.log("onIntegrate: User already has integration, returning 404")
+        if (integration && integration.Integrations.length > 0) {
+            console.log("onIntegrate: Existing integration found, proceeding with token update")
+            const token = await generateTokens(code)
+            if (token) {
+                const today = new Date()
+                const expire_date = today.setDate(today.getDate() + 60)
+                const update = await updateIntegrations(
+                    token.access_token,
+                    new Date(expire_date),
+                    integration.Integrations[0].id
+                )
+                if (!update) {
+                    console.log("onIntegrate: Failed to update integration")
+                    return { status: 500 }
+                }
+                console.log("onIntegrate: Integration updated successfully")
+                return { 
+                    status: 200, 
+                    data: { 
+                        firstname: integration.firstname, 
+                        lastname: integration.lastname 
+                    } 
+                }
+            }
+            return { status: 401 }
+        }
+
+        console.log("onIntegrate: User does not have an integration but integration object was falsy, returning 404")
         return {status: 404}
     } catch (error: any) {
         console.log("onIntegrate: Error occurred:", error)
