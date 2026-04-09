@@ -15,7 +15,7 @@ const PostNode = ({id}:Props) => {
     const {data} = useQueryAutomation(id)
 
   
-    return data?.data && data.data?.posts.length > 0 && (
+    return data?.data && data.data?.Post.length > 0 && (
         <div className='w-10/12 lg:w-8/12 relative xl:w-4/12 p-5 rounded-xl flex flex-col 
         bg-[#1D1D1D] gap-y-3'>
             <div className='absolute h-20 left-1/2 bottom-full flex flex-col items-center
@@ -38,7 +38,7 @@ const PostNode = ({id}:Props) => {
                     <p className='font-bold text-lg'>These posts</p>
                 </div>
                 <div className='flex gap-x-2 flex-wrap mt-3'>
-                    {data.data.posts.map((post: any) => (
+                    {data.data.Post.map((post: any) => (
                         <div className='relative w-4/12 aspect-square rounded-lg cursor-pointer
                         overflow-hidden'
                         key={post.id}

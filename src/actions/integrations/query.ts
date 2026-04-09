@@ -19,7 +19,7 @@ export const getIntegration = async (
     const row = await client.user.findUnique({
         where: { clerkId },
         select: {
-            integrations: {
+            Integrations: {
                 where: {
                     name: 'INSTAGRAM',
                 },
@@ -48,7 +48,7 @@ export const createIntegration = async (
                 clerkId,
             },
             data:{
-                integrations:{
+                Integrations:{
                     create:{
                         token,
                         expiresAt:expire,

@@ -12,10 +12,10 @@ type Props = {
 const ThenNode = ({id}: Props) => {
 
     const {data} = useQueryAutomation(id)
-    const commentTrigger = data?.data?.trigger.find((t: any) => t.type === 'COMMENT')
+    const commentTrigger = data?.data?.Trigger.find((t: any) => t.type === 'COMMENT')
 
 
-  return !data?.data?.listener ? (
+  return !data?.data?.Listener ? (
     <>
     </>
   ):(
@@ -36,14 +36,14 @@ const ThenNode = ({id}: Props) => {
         </div>
         <div className='bg-background-80 p-3 rounded-xl flex flex-col gap-y-z'>
             <div className='flex gap-x-2 items-center'>
-                {data.data.listener.listener === 'MESSAGE' ? (
+                {data.data.Listener.listener === 'MESSAGE' ? (
                     <PlaneBlue/>
                 ) : (
                     <SmartAi/>
                 )}
                 <p className=' text-lg'>
                     {
-                    data.data.listener.listener === 'MESSAGE' 
+                    data.data.Listener.listener === 'MESSAGE' 
                     ? 'Send the user a message'
                     : 'let Smart AI take over'
                     }
@@ -51,11 +51,11 @@ const ThenNode = ({id}: Props) => {
             </div>
 
             <p className='font-light text-text-secondary'>
-                {data.data.listener.prompt}
+                {data.data.Listener.prompt}
             </p>
         </div>
 
-        {data.data.posts.length > 0 ? (
+        {data.data.Post.length > 0 ? (
             <></>
             ) : commentTrigger ? (
               <PostButton id={id}/>

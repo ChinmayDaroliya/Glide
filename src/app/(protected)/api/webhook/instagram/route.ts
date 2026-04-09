@@ -37,13 +37,13 @@ export async function POST(req:NextRequest){
                     matcher.automationId,
                     true
                 )
-                if(automation && automation.trigger){
-                    if(automation.listener && automation.listener.listener === 'MESSAGE'){
+                if(automation && automation.Trigger){
+                    if(automation.Listener && automation.Listener.listener === 'MESSAGE'){
                         const direct_message = await sendDM(
                             webhook_payload.entry[0].id,
                             webhook_payload.entry[0].messaging[0].sender.id,
-                            automation.listener?.prompt,
-                            automation.User?.integrations[0].token!,
+                            automation.Listener?.prompt,
+                            automation.User?.Integrations[0].token!,
                         )
 
                         if(direct_message.status === 200){
@@ -60,15 +60,15 @@ export async function POST(req:NextRequest){
                         }
                     }
 
-                    if(automation.listener && automation.listener.listener === 'SMARTAI' 
-                        && automation.User?.subscription?.plan === 'PRO'
+                    if(automation.Listener && automation.Listener.listener === 'SMARTAI' 
+                        && automation.User?.Subscription?.plan === 'PRO'
                     ){
                         const smart_ai_message = await openai.chat.completions.create({
                             model: 'gpt-4o',
                             messages:[
                                 {
                                     role: 'assistant',
-                                    content: `${automation.listener?.prompt}: Keep responses under 2 sentences`,
+                                    content: `${automation.Listener?.prompt}: Keep responses under 2 sentences`,
 
                                 },
                             ],
@@ -95,7 +95,7 @@ export async function POST(req:NextRequest){
                                 webhook_payload.entry[0].id,
                                 webhook_payload.entry[0].messaging[0].sender.id,
                                 smart_ai_message.choices[0].message.content,
-                                automation.User?.integrations[0].token!      
+                                automation.User?.Integrations[0].token!      
                             )
 
                             if(direct_message.status === 200){
@@ -128,14 +128,14 @@ export async function POST(req:NextRequest){
                     automation?.id!
                 )
 
-                if(automation && automations_post && automation.trigger){
-                    if(automation.listener){
-                        if(automation.listener.listener === 'MESSAGE'){
+                if(automation && automations_post && automation.Trigger){
+                    if(automation.Listener){
+                        if(automation.Listener.listener === 'MESSAGE'){
                             const direct_message = await sendPrivateMessage(
                                 webhook_payload.entry[0].id,
                                 webhook_payload.entry[0].changes[0].value.id,
-                                automation.listener?.prompt,
-                                automation.User?.integrations[0].token!
+                                automation.Listener?.prompt,
+                                automation.User?.Integrations[0].token!
                             )
                             if(direct_message.status === 200){
                                 const tracked = await trackResponses(automation.id, 'COMMENT')
@@ -151,15 +151,15 @@ export async function POST(req:NextRequest){
                             }
                         }
                         if(
-                            automation.listener.listener === 'SMARTAI' &&
-                            automation.User?.subscription?.plan === 'PRO'
+                            automation.Listener.listener === 'SMARTAI' &&
+                            automation.User?.Subscription?.plan === 'PRO'
                         ){
                             const smart_ai_message = await openai.chat.completions.create({
                                 model: 'gpt-4o',
                                 messages:[
                                     {
                                         role: 'assistant',
-                                        content: `${automation.listener?.prompt} : Keep responses under 2 sentences`,
+                                        content: `${automation.Listener?.prompt} : Keep responses under 2 sentences`,
                                     },
                                 ],
                             })
@@ -184,7 +184,7 @@ export async function POST(req:NextRequest){
                                     webhook_payload.entry[0].id,
                                     webhook_payload.entry[0].changes[0].value.id,
                                     smart_ai_message.choices[0].message.content,
-                                    automation.User?.integrations[0].token!
+                                    automation.User?.Integrations[0].token!
                                 )
 
                                 if(direct_message.status === 200){
@@ -216,15 +216,15 @@ export async function POST(req:NextRequest){
                 const automation = await findAutomation(customer_history.automationId!)
 
                 if( 
-                    automation?.User?.subscription?.plan === 'PRO' &&
-                    automation.listener?.listener === 'SMARTAI' 
+                    automation?.User?.Subscription?.plan === 'PRO' &&
+                    automation.Listener?.listener === 'SMARTAI' 
                 ){
                     const smart_ai_message = await openai.chat.completions.create({
                         model: 'gpt-4o',
                         messages:[
                             {
                                 role: 'assistant',
-                                content: `${automation.listener?.prompt}: Keep responses under 2 sentences`,
+                                content: `${automation.Listener?.prompt}: Keep responses under 2 sentences`,
                             },
                             ...customer_history.history,
                             {
@@ -255,7 +255,7 @@ export async function POST(req:NextRequest){
                             webhook_payload.entry[0].id,
                             webhook_payload.entry[0].messaging[0].sender.id,
                             smart_ai_message.choices[0].message.content,
-                            automation.User?.integrations[0].token!
+                            automation.User?.Integrations[0].token!
                         )
 
                         if(direct_message.status === 200){

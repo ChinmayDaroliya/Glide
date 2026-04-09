@@ -5,24 +5,33 @@ import type { Prisma } from '@prisma/client'
  * Use these payloads + narrow casts at query boundaries.
  */
 
-export type UserWithProfile = Prisma.UserGetPayload<{
-  include: {
-    subscription: true
-    integrations: {
-      select: {
-        id: true
-        token: true
-        expiresAt: true
-        name: true
-      }
-    }
-  }
-}>
+export interface UserWithInstagramIntegrations {
+  integrations: Array<{
+    id: string
+    token: string
+    expiresAt: Date | null
+    name: 'INSTAGRAM'
+    instagramId: string | null
+    createdAt: Date
+    userId: string | null
+  }>
+}
 
-export type UserWithInstagramIntegrations = Prisma.UserGetPayload<{
-  select: {
-    integrations: {
-      where: { name: 'INSTAGRAM' }
-    }
-  }
-}>
+export interface UserWithProfile {
+  firstname: string | null
+  lastname: string | null
+  subscription: {
+    id: string
+    userId: string | null
+    createdAt: Date
+    plan: 'PRO' | 'FREE'
+    updatedAt: Date
+    customerId: string | null
+  } | null
+  integrations: Array<{
+    id: string
+    token: string
+    expiresAt: Date | null
+    name: string
+  }>
+}

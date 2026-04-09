@@ -18,21 +18,21 @@ export const getKeywordAutomation = async(automationId:string, dm:boolean) => {
             id:automationId,
         },
         include:{
-            dms:dm,
-            trigger:{
+            Dms:dm,
+            Trigger:{
                 where:{
                     type: dm ? 'DM' : 'COMMENT',
                 },
             },
-            listener: true,
+            Listener: true,
             User:{
                 select:{
-                    subscription:{
+                    Subscription:{
                         select:{
                             plan: true,
                         },
                     },
-                    integrations:{
+                    Integrations:{
                         select:{
                             token:true,
                         },
@@ -79,7 +79,7 @@ export const createChatHistory = (
             id: automationId,
         },
         data:{
-            dms:{
+            Dms:{
                 create:{
                     reciever,
                     senderId: sender,

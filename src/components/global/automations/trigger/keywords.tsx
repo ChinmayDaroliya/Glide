@@ -26,9 +26,9 @@ const Keywords = ({id}: Props) => {
         Add words that trigger automations
       </p>
       <div className='flex flex-wrap justify-start gap-2 items-center'>
-        {data?.data?.keywords &&  
-          data?.data?.keywords.length > 0 && 
-          data?.data?.keywords.map(
+        {data?.data?.Keyword &&  
+          data?.data?.Keyword.length > 0 && 
+          data?.data?.Keyword.map(
             (word: any) => (
               (!latestVariable?.variables?.id || word.id !== latestVariable.variables.id) && (
               <div key={word.id}

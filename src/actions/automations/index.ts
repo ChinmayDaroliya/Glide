@@ -2,7 +2,7 @@
 
 import { onCurrentUser } from "../user"
 import { findUser } from "../user/queries"
-import { addKeyWord, addListener, addPost, addTrigger, createAutomation, deleteAutomation, deleteKeywordQuery, findAutomation, getAutomations, updateAutomation } from "./queries"
+import { addKeyword, addListener, addPost, addTrigger, createAutomation, deleteAutomation, deleteKeywordQuery, findAutomation, getAutomations, updateAutomation } from "./queries"
 
 export const createAutomations = async (id?: string) => {
     const user = await onCurrentUser()
@@ -98,7 +98,7 @@ export const saveTrigger = async(automationId:string, trigger:string[]) => {
 export const saveKeyword = async(automationId:string, keyword:string) => {
     await onCurrentUser()
     try {
-        const create = await addKeyWord(automationId, keyword)
+        const create = await addKeyword(automationId, keyword)
 
         if(create) return {status:200, data:"Keyword added successfully"}
 
@@ -128,7 +128,7 @@ export const getProfilePosts = async() => {
     try {
         const profile = await findUser(user.id)
         
-        if (!profile || !profile.integrations || profile.integrations.length === 0) {
+        if (!profile || !profile.integrations || (profile.integrations as any[]).length === 0) {
             console.log("No Instagram integration found")
             return {status:404, message: "No Instagram integration found"}
         }

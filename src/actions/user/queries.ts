@@ -9,8 +9,8 @@ export const findUser = async (
     const row = await client.user.findUnique({
         where: { clerkId },
         include: {
-            subscription: true,
-            integrations: {
+            Subscription: true,
+            Integrations: {
                 select: {
                     id: true,
                     token: true,
@@ -35,7 +35,7 @@ export const createUser = async (
             firstname,
             lastname,
             email,
-            subscription: {
+            Subscription: {
                 create: {},
             },
         },
@@ -55,7 +55,7 @@ export const updateSubscription = async (
             clerkId,
         },
         data:{
-            subscription:{
+            Subscription:{
                 update:{
                     data:{
                         ...props,
