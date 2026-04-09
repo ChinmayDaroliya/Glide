@@ -1,9 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
+// OAuth callbacks must stay public: redirect host (e.g. Vercel) often has no Clerk cookie
+// when the user started Connect from localhost — session lives on another origin.
 const isProtectedRoute = createRouteMatcher([
     '/dashboard(.*)',
     '/api/payment(.*)',
-    '/callback(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
