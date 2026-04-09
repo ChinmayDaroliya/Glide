@@ -133,7 +133,7 @@ export const getProfilePosts = async() => {
             return {status:404, message: "No Instagram integration found"}
         }
         
-        const token = profile.integrations[0].token
+        const token = (profile.integrations[0] as any).token
         if (!token) {
             console.log("No access token found")
             return {status:404, message: "No access token found"}
