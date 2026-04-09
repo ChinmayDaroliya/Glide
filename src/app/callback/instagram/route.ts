@@ -7,8 +7,13 @@ import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'nodejs'
 
 function redirectTo(request: NextRequest, path: string) {
-  const target = new URL(path, request.nextUrl.origin)
-  return NextResponse.redirect(target, { status: 302 })
+  let target: URL
+  try {
+    target = new URL(path, request.url)
+  } catch (e) {
+    target = new URL(path, process.env.NEXT_PUBLIC_HOST_URL || 'https://glide-sandy.vercel.app')
+  }
+  return NextResponse.redirect(target)
 }
 
 function parseOAuthParams(request: NextRequest) {
@@ -18,12 +23,11 @@ function parseOAuthParams(request: NextRequest) {
   let error = fromRequestUrl.searchParams.get('error')
   let errorDescription = fromRequestUrl.searchParams.get('error_description')
 
-  // Vercel / proxies sometimes expose the original query on forwarded headers
   if (!code && !error) {
     const forwarded = request.headers.get('x-forwarded-uri')
     if (forwarded) {
       try {
-        const u = new URL(forwarded, request.nextUrl.origin)
+        const u = new URL(forwarded, request.nextUrl?.origin || request.url)
         code = u.searchParams.get('code')
         state = state ?? u.searchParams.get('state')
         error = error ?? u.searchParams.get('error')
@@ -38,66 +42,57 @@ function parseOAuthParams(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const { code, state, error, errorDescription, href } = parseOAuthParams(request)
-
-  console.log('=== OAUTH CALLBACK (route) ===')
-  console.log('OAuth Callback: full URL:', href)
-  console.log('OAuth Callback: Received code:', code ? 'YES' : 'NO')
-
-  if (error) {
-    console.log('OAuth Callback: Instagram returned error:', error)
-    console.log('OAuth Callback: Error description:', errorDescription)
-    return redirectTo(request, '/dashboard')
-  }
-
-  const clerkIdFromState = verifyInstagramOAuthState(state ?? undefined)
-  const sessionUser = await currentUser()
-  const effectiveClerkId = clerkIdFromState ?? sessionUser?.id
-
-  if (!effectiveClerkId) {
-    console.log(
-      'OAuth Callback: No valid state and no Clerk session — cannot tie OAuth to user'
-    )
-    return redirectTo(request, '/sign-in')
-  }
-
-  console.log(
-    'OAuth Callback: Clerk user for integration:',
-    effectiveClerkId,
-    'fromState:',
-    !!clerkIdFromState
-  )
-
-  if (!code) {
-    console.log('OAuth Callback: No code in query string — check redirect URI / Facebook app settings')
-    return redirectTo(request, '/dashboard')
-  }
-
-  const cleanCode = code.split('#_')[0]
-
   try {
-    console.log('OAuth Callback: Calling onIntegrate...')
-    const integrationResult = await onIntegrate(cleanCode, effectiveClerkId)
-    console.log('OAuth Callback: Integration result status:', integrationResult.status)
+    const { code, state, error, errorDescription, href } = parseOAuthParams(request)
 
-    if (integrationResult.status === 200 && integrationResult.data) {
-      const firstName = integrationResult.data.firstname
-      const lastName = integrationResult.data.lastname
-      const fullName = firstName + (lastName ?? '')
-      const redirectUrl = `/dashboard/${fullName}/integrations`
-      console.log('OAuth Callback: Redirecting to:', redirectUrl)
-      return redirectTo(request, redirectUrl)
+    console.log('=== OAUTH CALLBACK (route) ===')
+    console.log('OAuth Callback: full URL:', href)
+    console.log('OAuth Callback: Received code:', code ? 'YES' : 'NO')
+
+    if (error) {
+      console.log('OAuth Callback: Instagram returned error:', error)
+      console.log('OAuth Callback: Error description:', errorDescription)
+      return redirectTo(request, '/dashboard')
     }
 
-    console.log(
-      'OAuth Callback: Integration failed:',
-      JSON.stringify(integrationResult)
-    )
-  } catch (e: unknown) {
-    const err = e as Error
-    console.log('OAuth Callback: Error during integration:', err?.message)
-    console.log('OAuth Callback: Stack:', err?.stack)
-  }
+    const clerkIdFromState = verifyInstagramOAuthState(state ?? undefined)
+    const sessionUser = await currentUser()
+    const effectiveClerkId = clerkIdFromState ?? sessionUser?.id
 
-  return redirectTo(request, '/dashboard')
+    if (!effectiveClerkId) {
+      console.log('OAuth Callback: No valid state and no Clerk session — cannot tie OAuth to user')
+      return redirectTo(request, '/sign-in')
+    }
+
+    if (!code) {
+      console.log('OAuth Callback: No code in query string — check redirect URI')
+      return redirectTo(request, '/dashboard')
+    }
+
+    const cleanCode = code.split('#_')[0]
+
+    try {
+      const integrationResult = await onIntegrate(cleanCode, effectiveClerkId)
+      
+      if (integrationResult && integrationResult.status === 200 && integrationResult.data) {
+        const firstName = integrationResult.data.firstname
+        const lastName = integrationResult.data.lastname
+        const fullName = firstName + (lastName ?? '')
+        const redirectUrl = `/dashboard/${fullName}/integrations`
+        console.log('OAuth Callback: Redirecting to:', redirectUrl)
+        return redirectTo(request, redirectUrl)
+      }
+
+      console.log('OAuth Callback: Integration failed:', JSON.stringify(integrationResult))
+    } catch (e: unknown) {
+      const err = e as Error
+      console.log('OAuth Callback: Error during integration block:', err?.message)
+    }
+
+    return redirectTo(request, '/dashboard')
+  } catch (err: any) {
+    console.log('OAuth Callback: UNHANDLED FATAL ERROR in GET():', err?.message)
+    // Fallback if everything fails
+    return redirectTo(request, '/dashboard')
+  }
 }
