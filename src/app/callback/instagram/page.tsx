@@ -47,6 +47,7 @@ const Page = async({searchParams:{code}}: Props) => {
     }
 
     console.log("OAuth Callback: Fallback redirect to dashboard")
+   console.log("FULL URL CODE:", code)
     return redirect('/dashboard')
 }
 
