@@ -4,7 +4,6 @@ import React from 'react'
 
 type Props = {
     searchParams : {code: string}
-
 }
 
 const Page = async({searchParams:{code}}: Props) => {
