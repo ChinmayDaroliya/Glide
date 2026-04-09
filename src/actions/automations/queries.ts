@@ -1,7 +1,18 @@
 'use server'
 
-import {client} from '@/lib/prisma'
+import type { Prisma } from '@prisma/client'
+import { client } from '@/lib/prisma'
 import { v4 } from 'uuid'
+
+/** Explicit payload: PrismaPg adapter can widen `findUnique` to scalar User without this. */
+export type UserWithAutomationsList = Prisma.UserGetPayload<{
+  include: {
+    automations: {
+      orderBy: { createdAt: 'asc' }
+      include: { keywords: true; listener: true }
+    }
+  }
+}>
 
 export const createAutomation = async (clerkId:string, id? : string) => {
     return await client.user.update({
@@ -18,8 +29,10 @@ export const createAutomation = async (clerkId:string, id? : string) => {
     })
 }
 
-export const getAutomations = async (clerkId: string) => {
-    return client.user.findUnique({
+export const getAutomations = async (
+    clerkId: string
+): Promise<UserWithAutomationsList | null> => {
+    const row = await client.user.findUnique({
         where: { clerkId },
         include: {
             automations: {
@@ -31,6 +44,7 @@ export const getAutomations = async (clerkId: string) => {
             },
         },
     })
+    return row as UserWithAutomationsList | null
 }
 
 export const findAutomation = async (id:string) => {
