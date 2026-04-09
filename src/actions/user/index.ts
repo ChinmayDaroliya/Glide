@@ -20,9 +20,9 @@ export const onBoardUser = async () => {
     try {
         const found = await findUser(user.id)
         if(found){
-            if(found.integrations.length > 0){
+            if(found.Integrations.length > 0){
                 const today = new Date()
-                const time_left = found.integrations[0].expiresAt?.getTime()! - today.getTime()
+                const time_left = found.Integrations[0].expiresAt?.getTime()! - today.getTime()
 
                 const days = Math.round(time_left/(1000 * 3600 * 24))
 
@@ -30,7 +30,7 @@ export const onBoardUser = async () => {
                     console.log('refresh')
 
                     const refresh = await refreshToken(
-                        found.integrations[0].token
+                        found.Integrations[0].token
                     )
 
                     const today = new Date()
@@ -40,7 +40,7 @@ export const onBoardUser = async () => {
                     const update_token = await updateIntegrations(
                         refresh.access_token,
                         new Date(expire_date),
-                        found.integrations[0].id
+                        found.Integrations[0].id
                     )
 
                     if(!update_token){

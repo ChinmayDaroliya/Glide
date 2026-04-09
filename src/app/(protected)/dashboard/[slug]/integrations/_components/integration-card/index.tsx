@@ -22,7 +22,7 @@ const IntegrationCard = ({title,description,icon,strategy}: Props) => {
         queryFn: onUserInfo,
     })
 
-    const integrated = data?.data?.integrations.find(
+    const integrated = data?.data?.Integrations?.find(
         (integration: any) => integration.name === strategy
     )
 

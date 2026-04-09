@@ -54,9 +54,9 @@ export const onIntegrate = async(code: string, userId?: string) => {
         console.log("onIntegrate: Calling getIntegration...")
         const integration = await getIntegration(user.id)
         console.log("onIntegrate: getIntegration result:", JSON.stringify(integration, null, 2))
-        console.log("onIntegrate: Existing integrations count:", integration?.integrations?.length || 0)
+        console.log("onIntegrate: Existing integrations count:", integration?.Integrations?.length || 0)
         
-        if(integration && integration.integrations.length === 0){
+        if(integration && integration.Integrations.length === 0){
             console.log("onIntegrate: No existing integration, proceeding with token generation")
             console.log("onIntegrate: Calling generateTokens with code:", code.substring(0, 20) + "...")
             const token = await generateTokens(code)

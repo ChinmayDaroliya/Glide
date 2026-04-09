@@ -6,7 +6,7 @@ import type { Prisma } from '@prisma/client'
  */
 
 export interface UserWithInstagramIntegrations {
-  integrations: Array<{
+  Integrations: Array<{
     id: string
     token: string
     expiresAt: Date | null
@@ -20,7 +20,7 @@ export interface UserWithInstagramIntegrations {
 export interface UserWithProfile {
   firstname: string | null
   lastname: string | null
-  subscription: {
+  Subscription: {
     id: string
     userId: string | null
     createdAt: Date
@@ -28,7 +28,7 @@ export interface UserWithProfile {
     updatedAt: Date
     customerId: string | null
   } | null
-  integrations: Array<{
+  Integrations: Array<{
     id: string
     token: string
     expiresAt: Date | null

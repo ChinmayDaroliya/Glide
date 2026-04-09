@@ -128,12 +128,12 @@ export const getProfilePosts = async() => {
     try {
         const profile = await findUser(user.id)
         
-        if (!profile || !profile.integrations || (profile.integrations as any[]).length === 0) {
+        if (!profile || !profile.Integrations || (profile.Integrations as any[]).length === 0) {
             console.log("No Instagram integration found")
             return {status:404, message: "No Instagram integration found"}
         }
         
-        const token = (profile.integrations[0] as any).token
+        const token = (profile.Integrations[0] as any).token
         if (!token) {
             console.log("No access token found")
             return {status:404, message: "No access token found"}
