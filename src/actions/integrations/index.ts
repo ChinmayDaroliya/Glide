@@ -24,6 +24,15 @@ export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
 
         const clientId = process.env.INSTAGRAM_CLIENT_ID
         const redirectUri = getInstagramRedirectUri()
+        
+        console.log('\n' + '='.repeat(50))
+        console.log('=== INSTAGRAM OAUTH INITIATION ===')
+        console.log('='.repeat(50))
+        console.log('OAuth Init: Client ID:', clientId ? 'SET' : 'MISSING')
+        console.log('OAuth Init: Redirect URI:', redirectUri)
+        console.log('OAuth Init: Scope:', process.env.INSTAGRAM_OAUTH_SCOPE || 'DEFAULT_SCOPE')
+        console.log('='.repeat(50) + '\n')
+        
         // Use Facebook Login permission names (not instagram_business_*), which are for Business Login for Instagram.
         // See: https://developers.facebook.com/docs/facebook-login/permissions
         const scope = process.env.INSTAGRAM_OAUTH_SCOPE ??
@@ -45,7 +54,9 @@ export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
 }
 
 export const onIntegrate = async(code: string, userId?: string) => {
-    console.log("=== ONINTEGRATE START ===")
+    console.log('\n' + '='.repeat(50))
+    console.log('=== INSTAGRAM INTEGRATION PROCESS STARTED ===')
+    console.log('='.repeat(50))
     console.log("onIntegrate: Starting integration process")
     const user = userId ? { id: userId } : await onCurrentUser()
     console.log("onIntegrate: User ID:", user.id)
@@ -59,8 +70,10 @@ export const onIntegrate = async(code: string, userId?: string) => {
         if(integration && integration.Integrations.length === 0){
             console.log("onIntegrate: No existing integration, proceeding with token generation")
             console.log("onIntegrate: Calling generateTokens with code:", code.substring(0, 20) + "...")
+            console.log("onIntegrate: Code length:", code.length)
             const token = await generateTokens(code)
             console.log("onIntegrate: Token generated:", token ? "SUCCESS" : "FAILED")
+            console.log("onIntegrate: Token details:", JSON.stringify(token, null, 2))
 
             if(token){
                 console.log("onIntegrate: Token received, getting Instagram ID...")
@@ -123,5 +136,7 @@ export const onIntegrate = async(code: string, userId?: string) => {
         console.log("onIntegrate: Error stack:", error.stack)
         return {status: 500}
     }
-    console.log("=== ONINTEGRATE END ===")
+    console.log('='.repeat(50))
+    console.log('=== INSTAGRAM INTEGRATION PROCESS ENDED ===')
+    console.log('='.repeat(50) + '\n')
 }

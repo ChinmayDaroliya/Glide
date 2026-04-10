@@ -24,8 +24,8 @@ export const getAllAutomations = async () => {
     try {
         const userWithAutomations = await getAutomations(user.id)
 
-        if (userWithAutomations?.automations) {
-            return { status: 200, data: userWithAutomations.automations }
+        if (userWithAutomations?.Automation) {
+            return { status: 200, data: userWithAutomations.Automation }
         }
 
         return {status:404, data: []}

@@ -64,11 +64,11 @@ const AutomationList = (props: Props) => {
               This is from the comment
             </p>
 
-            {automation.keywords.length > 0 ? (
+            {automation.Keyword.length > 0 ? (
               <div className="flex gap-x-2 flex-wrap mt-3">
                 {
                   //@ts-ignore
-                  automation.keywords.map((keyword, key) => (
+                  automation.Keyword.map((keyword, key) => (
                     <div
                       key={keyword.id}
                       className={cn(

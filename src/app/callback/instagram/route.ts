@@ -45,9 +45,17 @@ export async function GET(request: NextRequest) {
   try {
     const { code, state, error, errorDescription, href } = parseOAuthParams(request)
 
-    console.log('=== OAUTH CALLBACK (route) ===')
+    console.log('\n' + '='.repeat(50))
+    console.log('=== INSTAGRAM OAUTH CALLBACK STARTED ===')
+    console.log('='.repeat(50))
     console.log('OAuth Callback: full URL:', href)
     console.log('OAuth Callback: Received code:', code ? 'YES' : 'NO')
+    console.log('OAuth Callback: Received state:', state ? 'YES' : 'NO')
+    console.log('OAuth Callback: Environment check - INSTAGRAM_CLIENT_ID:', process.env.INSTAGRAM_CLIENT_ID ? 'SET' : 'MISSING')
+    console.log('OAuth Callback: Environment check - INSTAGRAM_CLIENT_SECRET:', process.env.INSTAGRAM_CLIENT_SECRET ? 'SET' : 'MISSING')
+    console.log('OAuth Callback: Environment check - INSTAGRAM_TOKEN_URL:', process.env.INSTAGRAM_TOKEN_URL ? 'SET' : 'MISSING')
+    console.log('OAuth Callback: Environment check - INSTAGRAM_BASE_URL:', process.env.INSTAGRAM_BASE_URL ? 'SET' : 'MISSING')
+    console.log('='.repeat(50) + '\n')
 
     if (error) {
       console.log('OAuth Callback: Instagram returned error:', error)
