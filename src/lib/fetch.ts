@@ -68,41 +68,21 @@ export const sendPrivateMessage = async (
 }
 
 export const generateTokens = async (code: string) => {
-  const insta_form = new FormData()
+  const url = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${process.env.INSTAGRAM_CLIENT_ID
+    }&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET
+    }&redirect_uri=${encodeURIComponent(
+      getInstagramRedirectUri()
+    )}&code=${code}`
 
-  insta_form.append('client_id', process.env.INSTAGRAM_CLIENT_ID as string)
-  insta_form.append(
-    'client_secret',
-    process.env.INSTAGRAM_CLIENT_SECRET as string
-  )
-  insta_form.append('grant_type', 'authorization_code')
-  insta_form.append(
-    'redirect_uri',
-    getInstagramRedirectUri()
-  )
-  insta_form.append('code', code)
+  const res = await fetch(url, { method: "GET" })
+  const data = await res.json()
 
-  const shortTokenRes = await fetch(
-    process.env.INSTAGRAM_TOKEN_URL as string,
-    {
-      method: 'POST',
-      body: insta_form,
-    }
-  )
+  console.log("TOKEN RESPONSE:", data)
 
-  const token = await shortTokenRes.json()
-
-  console.log("SHORT TOKEN:", token)
-
-  if (token.access_token) {
-    const long_token = await axios.get(
-      `${process.env.INSTAGRAM_BASE_URL}/access_token?grant_type=ig_exchange_token&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}&access_token=${token.access_token}`
-    )
-
-    console.log('LONG TOKEN:', long_token.data)
-    console.log('CODE:', code)
-
-
-    return long_token.data
+  if (!data.access_token) {
+    console.log("No access token returned")
+    return null
   }
+
+  return data
 }
