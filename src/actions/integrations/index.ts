@@ -118,7 +118,7 @@ export const onIntegrate = async (code: string, userId?: string) => {
 
                 const create = await createIntegration(
                     user.id,
-                    token.access_token,
+                    pageAccessToken,
                     new Date(expire_date),
                     igId
                 )
@@ -138,11 +138,23 @@ export const onIntegrate = async (code: string, userId?: string) => {
 
             if (token) {
 
+                // get pages again
+                const pages = await axios.get(
+                    `https://graph.facebook.com/v21.0/me/accounts?access_token=${token.access_token}`
+                )
+
+                if (!pages.data.data?.length) {
+                    console.log('onIntegrate: No pages found')
+                    return { status: 404 }
+                }
+
+                const pageAccessToken = pages.data.data[0].access_token
+
                 const today = new Date()
                 const expire_date = today.setDate(today.getDate() + 60)
 
                 const update = await updateIntegrations(
-                    token.access_token,
+                    pageAccessToken,
                     new Date(expire_date),
                     integration.Integrations[0].id
                 )
