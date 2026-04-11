@@ -15,8 +15,8 @@ const getInstagramRedirectUri = () => {
     return `${process.env.NEXT_PUBLIC_HOST_URL}/callback/instagram`
 }
 
-export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
-    if(strategy === 'INSTAGRAM'){
+export const onOAuthInstagram = async (strategy: 'INSTAGRAM' | 'CRM') => {
+    if (strategy === 'INSTAGRAM') {
         const sessionUser = await currentUser()
         if (!sessionUser) {
             return redirect('/sign-in')
@@ -24,7 +24,7 @@ export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
 
         const clientId = process.env.INSTAGRAM_CLIENT_ID
         const redirectUri = getInstagramRedirectUri()
-        
+
         console.log('\n' + '='.repeat(50))
         console.log('=== INSTAGRAM OAUTH INITIATION ===')
         console.log('='.repeat(50))
@@ -32,7 +32,7 @@ export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
         console.log('OAuth Init: Redirect URI:', redirectUri)
         console.log('OAuth Init: Scope:', process.env.INSTAGRAM_OAUTH_SCOPE || 'DEFAULT_SCOPE')
         console.log('='.repeat(50) + '\n')
-        
+
         // Use Facebook Login permission names (not instagram_business_*), which are for Business Login for Instagram.
         // See: https://developers.facebook.com/docs/facebook-login/permissions
         const scope = process.env.INSTAGRAM_OAUTH_SCOPE ??
@@ -53,90 +53,95 @@ export const onOAuthInstagram =async (strategy: 'INSTAGRAM' | 'CRM') => {
     }
 }
 
-export const onIntegrate = async(code: string, userId?: string) => {
+export const onIntegrate = async (code: string, userId?: string) => {
     console.log('\n' + '='.repeat(50))
     console.log('=== INSTAGRAM INTEGRATION PROCESS STARTED ===')
     console.log('='.repeat(50))
-    console.log("onIntegrate: Starting integration process")
-    const user = userId ? { id: userId } : await onCurrentUser()
-    console.log("onIntegrate: User ID:", user.id)
-    
-    try {
-        console.log("onIntegrate: Calling getIntegration...")
-        const integration = await getIntegration(user.id)
-        console.log("onIntegrate: getIntegration result:", JSON.stringify(integration, null, 2))
-        console.log("onIntegrate: Existing integrations count:", integration?.Integrations?.length || 0)
-        
-        if(integration && integration.Integrations.length === 0){
-            console.log("onIntegrate: No existing integration, proceeding with token generation")
-            console.log("onIntegrate: Calling generateTokens with code:", code.substring(0, 20) + "...")
-            console.log("onIntegrate: Code length:", code.length)
-            const token = await generateTokens(code)
-            console.log("onIntegrate: Token generated:", token ? "SUCCESS" : "FAILED")
-            console.log("onIntegrate: Token details:", JSON.stringify(token, null, 2))
 
-            if(token){
-                console.log("onIntegrate: Token received, getting Instagram ID...")
-                const insta_id = await axios.get(
-                    `${process.env.INSTAGRAM_BASE_URL}/me?fields=user_id&access_token=${token.access_token}`
+    const user = userId ? { id: userId } : await onCurrentUser()
+
+    try {
+        const integration = await getIntegration(user.id)
+
+        if (integration && integration.Integrations.length === 0) {
+
+            const token = await generateTokens(code)
+
+            if (token) {
+
+                // STEP 1 — get pages
+                const pages = await axios.get(
+                    `https://graph.facebook.com/v21.0/me/accounts?access_token=${token.access_token}`
                 )
-                console.log("onIntegrate: Instagram ID retrieved:", insta_id.data.user_id)
-                console.log("onIntegrate: Instagram ID type:", typeof insta_id.data.user_id)
+
+                if (!pages.data.data.length) {
+                    console.log("No pages found")
+                    return { status: 404 }
+                }
+
+                const pageId = pages.data.data[0].id
+
+                // STEP 2 — get instagram business account
+                const insta = await axios.get(
+                    `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account`
+                )
+
+                const igId = insta.data.instagram_business_account?.id
+
+                if (!igId) {
+                    console.log("No instagram business account connected")
+                    return { status: 404 }
+                }
 
                 const today = new Date()
                 const expire_date = today.setDate(today.getDate() + 60)
-                console.log("onIntegrate: Token expires on:", new Date(expire_date))
 
-                console.log("onIntegrate: Calling createIntegration...")
                 const create = await createIntegration(
                     user.id,
                     token.access_token,
                     new Date(expire_date),
-                    insta_id.data.user_id
+                    igId
                 )
-                console.log("onIntegrate: createIntegration result:", JSON.stringify(create, null, 2))
-                console.log("onIntegrate: Integration created successfully")
 
-                return {status: 200, data:create}
+                return { status: 200, data: create }
             }
-            console.log("onIntegrate: Token generation failed")
-            return {status: 401}
+
+            return { status: 401 }
         }
+
         if (integration && integration.Integrations.length > 0) {
-            console.log("onIntegrate: Existing integration found, proceeding with token update")
+
             const token = await generateTokens(code)
+
             if (token) {
+
                 const today = new Date()
                 const expire_date = today.setDate(today.getDate() + 60)
+
                 const update = await updateIntegrations(
                     token.access_token,
                     new Date(expire_date),
                     integration.Integrations[0].id
                 )
-                if (!update) {
-                    console.log("onIntegrate: Failed to update integration")
-                    return { status: 500 }
-                }
-                console.log("onIntegrate: Integration updated successfully")
-                return { 
-                    status: 200, 
-                    data: { 
-                        firstname: integration.firstname, 
-                        lastname: integration.lastname 
-                    } 
+
+                if (!update) return { status: 500 }
+
+                return {
+                    status: 200,
+                    data: {
+                        firstname: integration.firstname,
+                        lastname: integration.lastname
+                    }
                 }
             }
+
             return { status: 401 }
         }
 
-        console.log("onIntegrate: User does not have an integration but integration object was falsy, returning 404")
-        return {status: 404}
+        return { status: 404 }
+
     } catch (error: any) {
-        console.log("onIntegrate: Error occurred:", error)
-        console.log("onIntegrate: Error stack:", error.stack)
-        return {status: 500}
+        console.log("onIntegrate error:", error)
+        return { status: 500 }
     }
-    console.log('='.repeat(50))
-    console.log('=== INSTAGRAM INTEGRATION PROCESS ENDED ===')
-    console.log('='.repeat(50) + '\n')
 }
