@@ -83,36 +83,32 @@ export const onIntegrate = async (code: string, userId?: string) => {
             const token = await generateTokens(code)
 
             if (token) {
-                console.log('onIntegrate: Token obtained, fetching /me/accounts...')
+                console.log('onIntegrate: Token obtained, fetching accounts...')
 
-                // STEP 1 — get pages
+                // FIXED — get pages + IG in one call
                 const pages = await axios.get(
-                    `https://graph.facebook.com/v21.0/me/accounts?access_token=${token.access_token}`
+                    `https://graph.facebook.com/v21.0/me?fields=accounts{id,name,access_token,instagram_business_account}&access_token=${token.access_token}`
                 )
-                console.log('onIntegrate: Pages response:', JSON.stringify(pages.data))
 
-                if (!pages.data.data?.length) {
+                console.log('onIntegrate: Accounts response:', JSON.stringify(pages.data))
+
+                const page = pages.data.accounts?.data?.[0]
+
+                if (!page) {
                     console.log('onIntegrate: No pages found')
                     return { status: 404 }
                 }
 
-                const pageId = pages.data.data[0].id
-                const pageAccessToken = pages.data.data[0].access_token
-                console.log('onIntegrate: Page ID:', pageId)
-
-                // STEP 2 — get instagram business account
-                const insta = await axios.get(
-                    `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${pageAccessToken}`
-                )
-                console.log('onIntegrate: IG business account response:', JSON.stringify(insta.data))
-
-                const igId = insta.data.instagram_business_account?.id
+                const pageId = page.id
+                const pageAccessToken = page.access_token
+                const igId = page.instagram_business_account?.id
 
                 if (!igId) {
-                    console.log('onIntegrate: No instagram business account connected to page')
+                    console.log('onIntegrate: No instagram business account connected')
                     return { status: 404 }
                 }
 
+                console.log('onIntegrate: Page ID:', pageId)
                 console.log('onIntegrate: Instagram Business ID:', igId)
 
                 const today = new Date()
@@ -140,17 +136,18 @@ export const onIntegrate = async (code: string, userId?: string) => {
 
             if (token) {
 
-                // get pages again
                 const pages = await axios.get(
-                    `https://graph.facebook.com/v21.0/me/accounts?access_token=${token.access_token}`
+                    `https://graph.facebook.com/v21.0/me?fields=accounts{id,name,access_token,instagram_business_account}&access_token=${token.access_token}`
                 )
 
-                if (!pages.data.data?.length) {
+                const page = pages.data.accounts?.data?.[0]
+
+                if (!page) {
                     console.log('onIntegrate: No pages found')
                     return { status: 404 }
                 }
 
-                const pageAccessToken = pages.data.data[0].access_token
+                const pageAccessToken = page.access_token
 
                 const today = new Date()
                 const expire_date = today.setDate(today.getDate() + 60)
