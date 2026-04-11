@@ -67,122 +67,96 @@ export const onIntegrate = async (code: string, userId?: string) => {
     let user: { id: string }
     if (userId) {
         user = { id: userId }
-        console.log('onIntegrate: Using provided userId:', userId)
     } else {
         user = await onCurrentUser()
-        console.log('onIntegrate: Using Clerk userId:', user.id)
     }
 
     try {
         const integration = await getIntegration(user.id)
-        console.log('onIntegrate: Existing integrations count:', integration?.Integrations?.length ?? 'null')
 
+        // CREATE NEW
         if (integration && integration.Integrations.length === 0) {
-            console.log('onIntegrate: No existing integration — creating new one')
-
             const token = await generateTokens(code)
+            if (!token) return { status: 401 }
 
-            if (token) {
-                console.log('onIntegrate: Token obtained, fetching page...')
+            // ✅ FINAL CORRECT FLOW
+            const me = await axios.get(
+                `https://graph.facebook.com/v21.0/me?fields=accounts{instagram_business_account,name,id}&access_token=${token.access_token}`
+            )
 
-                // STEP 1 — get page id
-                const me = await axios.get(
-                    `https://graph.facebook.com/v21.0/me?access_token=${token.access_token}`
-                )
+            const page = me.data.accounts?.data?.[0]
 
-                const pageId = me.data.id || me.data?.data?.[0]?.id
-                console.log('Page ID:', pageId)
-
-                if (!pageId) {
-                    console.log("No page id found")
-                    return { status: 404 }
-                }
-
-                // STEP 2 — get instagram business account
-                const insta = await axios.get(
-                    `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${token.access_token}`
-                )
-
-                const igId = insta.data.instagram_business_account?.id
-
-                if (!igId) {
-                    console.log("No instagram business account connected")
-                    return { status: 404 }
-                }
-
-                const pageAccessToken = token.access_token
-
-                console.log('Instagram Business ID:', igId)
-
-                const today = new Date()
-                const expire_date = today.setDate(today.getDate() + 60)
-
-                const create = await createIntegration(
-                    user.id,
-                    pageAccessToken,
-                    new Date(expire_date),
-                    igId
-                )
-
-                console.log('onIntegrate: Integration created successfully')
-                return { status: 200, data: create }
+            if (!page) {
+                console.log("No page found")
+                return { status: 404 }
             }
 
-            return { status: 401 }
+            const pageId = page.id
+            const igId = page.instagram_business_account?.id
+            const pageAccessToken = token.access_token
+
+            if (!igId) {
+                console.log("No instagram account connected")
+                return { status: 404 }
+            }
+
+            console.log("Page ID:", pageId)
+            console.log("Instagram ID:", igId)
+
+            const today = new Date()
+            const expire_date = today.setDate(today.getDate() + 60)
+
+            const create = await createIntegration(
+                user.id,
+                pageAccessToken,
+                new Date(expire_date),
+                igId
+            )
+
+            return { status: 200, data: create }
         }
 
+        // UPDATE EXISTING
         if (integration && integration.Integrations.length > 0) {
-            console.log('onIntegrate: Existing integration found — updating token')
-
             const token = await generateTokens(code)
+            if (!token) return { status: 401 }
 
-            if (token) {
+            const me = await axios.get(
+                `https://graph.facebook.com/v21.0/me?fields=accounts{instagram_business_account,name,id}&access_token=${token.access_token}`
+            )
 
-                const me = await axios.get(
-                    `https://graph.facebook.com/v21.0/me?access_token=${token.access_token}`
-                )
+            const page = me.data.accounts?.data?.[0]
+            if (!page) return { status: 404 }
 
-                const pageId = me.data.id
+            const pageAccessToken = token.access_token
 
-                const insta = await axios.get(
-                    `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${token.access_token}`
-                )
+            const today = new Date()
+            const expire_date = today.setDate(today.getDate() + 60)
 
-                const igId = insta.data.instagram_business_account?.id
+            const update = await updateIntegrations(
+                pageAccessToken,
+                new Date(expire_date),
+                integration.Integrations[0].id
+            )
 
-                if (!igId) {
-                    return { status: 404 }
-                }
+            if (!update) return { status: 500 }
 
-                const pageAccessToken = token.access_token
-
-                const today = new Date()
-                const expire_date = today.setDate(today.getDate() + 60)
-
-                const update = await updateIntegrations(
-                    pageAccessToken,
-                    new Date(expire_date),
-                    integration.Integrations[0].id
-                )
-
-                if (!update) return { status: 500 }
-
-                return {
-                    status: 200,
-                    data: {
-                        firstname: integration.firstname,
-                        lastname: integration.lastname
-                    }
+            return {
+                status: 200,
+                data: {
+                    firstname: integration.firstname,
+                    lastname: integration.lastname
                 }
             }
-
-            return { status: 401 }
         }
 
         return { status: 404 }
 
     } catch (error: any) {
-        console.log('onIntegrate error:', error?.response?.data ?? error?.message ?? error)
+        console.log(
+            'onIntegrate error:',
+            error?.response?.data ?? error?.message ?? error
+        )
         return { status: 500 }
     }
 }
