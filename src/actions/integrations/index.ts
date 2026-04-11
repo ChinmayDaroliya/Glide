@@ -83,14 +83,27 @@ export const onIntegrate = async (code: string, userId?: string) => {
             const token = await generateTokens(code)
 
             if (token) {
-                console.log('onIntegrate: Token obtained, fetching accounts...')
+                console.log('onIntegrate: Token obtained, fetching page...')
 
-                // FIXED — get pages + IG in one call
-                const page = await axios.get(
-                    `https://graph.facebook.com/v21.0/me?fields=instagram_business_account&access_token=${token.access_token}`
+                // STEP 1 — get page id
+                const me = await axios.get(
+                    `https://graph.facebook.com/v21.0/me?access_token=${token.access_token}`
                 )
 
-                const igId = page.data.instagram_business_account?.id
+                const pageId = me.data.id || me.data?.data?.[0]?.id
+                console.log('Page ID:', pageId)
+
+                if (!pageId) {
+                    console.log("No page id found")
+                    return { status: 404 }
+                }
+
+                // STEP 2 — get instagram business account
+                const insta = await axios.get(
+                    `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${token.access_token}`
+                )
+
+                const igId = insta.data.instagram_business_account?.id
 
                 if (!igId) {
                     console.log("No instagram business account connected")
@@ -99,7 +112,8 @@ export const onIntegrate = async (code: string, userId?: string) => {
 
                 const pageAccessToken = token.access_token
 
-                console.log('onIntegrate: Instagram Business ID:', igId)
+                console.log('Instagram Business ID:', igId)
+
                 const today = new Date()
                 const expire_date = today.setDate(today.getDate() + 60)
 
@@ -114,7 +128,6 @@ export const onIntegrate = async (code: string, userId?: string) => {
                 return { status: 200, data: create }
             }
 
-            console.log('onIntegrate: Token generation failed')
             return { status: 401 }
         }
 
@@ -125,18 +138,23 @@ export const onIntegrate = async (code: string, userId?: string) => {
 
             if (token) {
 
-                const pages = await axios.get(
-                    `https://graph.facebook.com/v21.0/me?fields=accounts{id,name,access_token,instagram_business_account}&access_token=${token.access_token}`
+                const me = await axios.get(
+                    `https://graph.facebook.com/v21.0/me?access_token=${token.access_token}`
                 )
 
-                const page = pages.data.accounts?.data?.[0]
+                const pageId = me.data.id
 
-                if (!page) {
-                    console.log('onIntegrate: No pages found')
+                const insta = await axios.get(
+                    `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account&access_token=${token.access_token}`
+                )
+
+                const igId = insta.data.instagram_business_account?.id
+
+                if (!igId) {
                     return { status: 404 }
                 }
 
-                const pageAccessToken = page.access_token
+                const pageAccessToken = token.access_token
 
                 const today = new Date()
                 const expire_date = today.setDate(today.getDate() + 60)
@@ -161,7 +179,6 @@ export const onIntegrate = async (code: string, userId?: string) => {
             return { status: 401 }
         }
 
-        console.log('onIntegrate: No user record found in DB')
         return { status: 404 }
 
     } catch (error: any) {
