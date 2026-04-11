@@ -4,14 +4,15 @@ import React from 'react'
 
 type Props = {
   searchParams: {
-    code: string
+    [key: string]: string | string[] | undefined
   }
 }
 
-const Page = async ({ searchParams: { code } }: Props) => {
+const Page = async ({ searchParams }: Props) => {
+  const code = searchParams.code
   if (code) {
-    console.log(code)
-    const user = await onIntegrate(code.split('#_')[0])
+
+    const user = await onIntegrate(code as string)
     if (user.status === 200) {
       return redirect(
         `/dashboard/${user.data?.firstname}${user.data?.lastname}/integrations`
