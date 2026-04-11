@@ -68,11 +68,12 @@ export const sendPrivateMessage = async (
 }
 
 export const generateTokens = async (code: string) => {
-  const url = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${process.env.INSTAGRAM_CLIENT_ID
-    }&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET
-    }&redirect_uri=${encodeURIComponent(
-      getInstagramRedirectUri()
-    )}&code=${code}`
+  const url =
+    `https://graph.facebook.com/v21.0/oauth/access_token` +
+    `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
+    `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
+    `&redirect_uri=${encodeURIComponent(getInstagramRedirectUri())}` +
+    `&code=${code}`
 
   const res = await fetch(url, { method: "GET" })
   const data = await res.json()
@@ -80,7 +81,7 @@ export const generateTokens = async (code: string) => {
   console.log("TOKEN RESPONSE:", data)
 
   if (!data.access_token) {
-    console.log("No access token returned")
+    console.log("NO ACCESS TOKEN RETURNED")
     return null
   }
 
