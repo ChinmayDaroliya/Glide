@@ -164,7 +164,7 @@ export async function POST(req:NextRequest){
                                 ],
                             })
                             if(smart_ai_message.choices[0].message.content){
-                                const reciever = createChatHistory(
+                               const reciever = createChatHistory(
                                     automation.id,
                                     webhook_payload.entry[0].id,
                                     webhook_payload.entry[0].changes[0].value.from.id,
