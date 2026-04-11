@@ -47,11 +47,13 @@ export const onOAuthInstagram = async (strategy: 'INSTAGRAM' | 'CRM') => {
         oauthUrl.searchParams.set('redirect_uri', redirectUri)
         oauthUrl.searchParams.set('scope', scope)
         oauthUrl.searchParams.set('response_type', 'code')
+        oauthUrl.searchParams.set('auth_type', 'rerequest')
         oauthUrl.searchParams.set('state', signInstagramOAuthState(sessionUser.id))
         oauthUrl.searchParams.set(
             'extras',
             JSON.stringify({ setup: { channel: 'IG_API_ONBOARDING' } })
         )
+        oauthUrl.searchParams.set('auth_type', 'rerequest')
 
         return redirect(oauthUrl.toString())
     }

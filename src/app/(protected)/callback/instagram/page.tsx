@@ -21,7 +21,7 @@ const Page = async ({ searchParams }: Props) => {
       return redirect('/sign-in')
     }
 
-    const user = await onIntegrate(code, clerkId)
+    const user = await onIntegrate(code, clerkId || undefined)
     if (user.status === 200) {
       return redirect(
         `/dashboard/${user.data?.firstname}${user.data?.lastname}/integrations`
