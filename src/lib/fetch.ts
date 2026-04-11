@@ -68,22 +68,35 @@ export const sendPrivateMessage = async (
 }
 
 export const generateTokens = async (code: string) => {
+  const redirectUri = getInstagramRedirectUri()
+
+  console.log('\n=== generateTokens ===')
+  console.log('redirect_uri:', redirectUri)
+  console.log('code (first 30):', code.substring(0, 30) + '...')
+
   const url =
     `https://graph.facebook.com/v21.0/oauth/access_token` +
     `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
     `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
-    `&redirect_uri=${encodeURIComponent(getInstagramRedirectUri())}` +
-    `&code=${code}`
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&code=${encodeURIComponent(code)}` +
+    `&grant_type=authorization_code`
 
-  const res = await fetch(url, { method: "GET" })
-  const data = await res.json()
+  try {
+    const res = await fetch(url, { method: 'GET' })
+    const data = await res.json()
 
-  console.log("TOKEN RESPONSE:", data)
+    console.log('Token exchange status:', res.status)
+    console.log('TOKEN RESPONSE:', JSON.stringify(data))
 
-  if (!data.access_token) {
-    console.log("NO ACCESS TOKEN RETURNED")
+    if (!data.access_token) {
+      console.log('NO ACCESS TOKEN — error:', data.error?.message ?? data)
+      return null
+    }
+
+    return data
+  } catch (err) {
+    console.error('generateTokens fetch error:', err)
     return null
   }
-
-  return data
 }
