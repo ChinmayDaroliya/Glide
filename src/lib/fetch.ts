@@ -70,33 +70,28 @@ export const sendPrivateMessage = async (
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
-  console.log('\n=== generateTokens ===')
-  console.log('redirect_uri:', redirectUri)
-  console.log('code (first 30):', code.substring(0, 30) + '...')
-
-  const url =
+  const shortUrl =
     `https://graph.facebook.com/v21.0/oauth/access_token` +
     `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
     `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&code=${encodeURIComponent(code)}` +
-    `&grant_type=authorization_code`
+    `&code=${encodeURIComponent(code)}`
 
-  try {
-    const res = await fetch(url, { method: 'GET' })
-    const data = await res.json()
+  const shortRes = await fetch(shortUrl)
+  const shortData = await shortRes.json()
 
-    console.log('Token exchange status:', res.status)
-    console.log('TOKEN RESPONSE:', JSON.stringify(data))
+  if (!shortData.access_token) return null
 
-    if (!data.access_token) {
-      console.log('NO ACCESS TOKEN — error:', data.error?.message ?? data)
-      return null
-    }
+  // exchange for long lived token
+  const longRes = await fetch(
+    `https://graph.facebook.com/v21.0/oauth/access_token` +
+    `?grant_type=fb_exchange_token` +
+    `&client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
+    `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
+    `&fb_exchange_token=${shortData.access_token}`
+  )
 
-    return data
-  } catch (err) {
-    console.error('generateTokens fetch error:', err)
-    return null
-  }
+  const longData = await longRes.json()
+
+  return longData
 }

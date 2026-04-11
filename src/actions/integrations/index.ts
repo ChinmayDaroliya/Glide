@@ -87,12 +87,12 @@ export const onIntegrate = async (code: string, userId?: string) => {
 
                 // FIXED — get pages + IG in one call
                 const pages = await axios.get(
-                    `https://graph.facebook.com/v21.0/me?fields=accounts{id,name,access_token,instagram_business_account}&access_token=${token.access_token}`
+                    `https://graph.facebook.com/v21.0/me/accounts?access_token=${token.access_token}`
                 )
 
                 console.log('onIntegrate: Accounts response:', JSON.stringify(pages.data))
 
-                const page = pages.data.accounts?.data?.[0]
+                const page = pages.data.data?.[0]
 
                 if (!page) {
                     console.log('onIntegrate: No pages found')
