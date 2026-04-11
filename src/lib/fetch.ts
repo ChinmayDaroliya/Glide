@@ -70,28 +70,19 @@ export const sendPrivateMessage = async (
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
-  const shortUrl =
+  const res = await fetch(
     `https://graph.facebook.com/v21.0/oauth/access_token` +
     `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
     `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&code=${encodeURIComponent(code)}`
-
-  const shortRes = await fetch(shortUrl)
-  const shortData = await shortRes.json()
-
-  if (!shortData.access_token) return null
-
-  // exchange for long lived token
-  const longRes = await fetch(
-    `https://graph.facebook.com/v21.0/oauth/access_token` +
-    `?grant_type=fb_exchange_token` +
-    `&client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
-    `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
-    `&fb_exchange_token=${shortData.access_token}`
+    `&code=${code}` +
+    `&grant_type=authorization_code`
   )
 
-  const longData = await longRes.json()
+  const data = await res.json()
 
-  return longData
+  if (!data.access_token) return null
+
+  // IMPORTANT: do NOT exchange again
+  return data
 }
