@@ -5,40 +5,40 @@ import { openai } from '@/lib/openai'
 import { client } from "@/lib/prisma";
 import { findAutomation } from "@/actions/automations/queries";
 
-export async function GET (req:NextRequest) {
+export async function GET(req: NextRequest) {
     const hub = req.nextUrl.searchParams.get("hub.challenge")
 
     return new NextResponse(hub)
 }
 
-export async function POST(req:NextRequest){
+export async function POST(req: NextRequest) {
     const webhook_payload = await req.json()
     let matcher
     try {
-        if(webhook_payload.entry[0].messaging){
+        if (webhook_payload.entry[0].messaging) {
             matcher = await matchKeyword(
                 webhook_payload.entry[0].messaging[0].message.text
             )
         }
 
-        if(webhook_payload.entry[0].changes){
+        if (webhook_payload.entry[0].changes) {
             matcher = await matchKeyword(
-                webhook_payload.entry[0].changes[0].value.text   
+                webhook_payload.entry[0].changes[0].value.text
             )
         }
 
-        if(matcher && matcher.automationId){
+        if (matcher && matcher.automationId) {
             // we have a keyword matcher
 
 
-            if(webhook_payload.entry[0].messaging){
+            if (webhook_payload.entry[0].messaging) {
 
                 const automation = await getKeywordAutomation(
                     matcher.automationId,
                     true
                 )
-                if(automation && automation.Trigger){
-                    if(automation.Listener && automation.Listener.listener === 'MESSAGE'){
+                if (automation && automation.Trigger) {
+                    if (automation.Listener && automation.Listener.listener === 'MESSAGE') {
                         const direct_message = await sendDM(
                             webhook_payload.entry[0].id,
                             webhook_payload.entry[0].messaging[0].sender.id,
@@ -46,26 +46,26 @@ export async function POST(req:NextRequest){
                             automation.User?.Integrations[0].token!,
                         )
 
-                        if(direct_message.status === 200){
+                        if (direct_message.status === 200) {
                             const tracked = await trackResponses(automation.id, 'DM')
-                            
-                            if(tracked){
+
+                            if (tracked) {
                                 return NextResponse.json(
                                     {
                                         message: 'Message sent',
                                     },
-                                    {status:200}
+                                    { status: 200 }
                                 )
                             }
                         }
                     }
 
-                    if(automation.Listener && automation.Listener.listener === 'SMARTAI' 
+                    if (automation.Listener && automation.Listener.listener === 'SMARTAI'
                         && automation.User?.Subscription?.plan === 'PRO'
-                    ){
+                    ) {
                         const smart_ai_message = await openai.chat.completions.create({
                             model: 'gpt-4o',
-                            messages:[
+                            messages: [
                                 {
                                     role: 'assistant',
                                     content: `${automation.Listener?.prompt}: Keep responses under 2 sentences`,
@@ -74,7 +74,7 @@ export async function POST(req:NextRequest){
                             ],
                         })
 
-                        if(smart_ai_message.choices[0].message.content){
+                        if (smart_ai_message.choices[0].message.content) {
                             const reciever = createChatHistory(
                                 automation.id,
                                 webhook_payload.entry[0].id,
@@ -95,17 +95,17 @@ export async function POST(req:NextRequest){
                                 webhook_payload.entry[0].id,
                                 webhook_payload.entry[0].messaging[0].sender.id,
                                 smart_ai_message.choices[0].message.content,
-                                automation.User?.Integrations[0].token!      
+                                automation.User?.Integrations[0].token!
                             )
 
-                            if(direct_message.status === 200){
+                            if (direct_message.status === 200) {
                                 const tracked = await trackResponses(automation.id, 'DM')
-                                if(tracked){
+                                if (tracked) {
                                     return NextResponse.json(
                                         {
                                             message: 'Message sent'
                                         },
-                                        {status:200}
+                                        { status: 200 }
                                     )
                                 }
                             }
@@ -114,10 +114,10 @@ export async function POST(req:NextRequest){
                 }
             }
 
-            if(
+            if (
                 webhook_payload.entry[0].changes &&
                 webhook_payload.entry[0].changes[0].field === "comments"
-            ){
+            ) {
                 const automation = await getKeywordAutomation(
                     matcher.automationId,
                     false
@@ -128,47 +128,47 @@ export async function POST(req:NextRequest){
                     automation?.id!
                 )
 
-                if(automation && automations_post && automation.Trigger){
-                    if(automation.Listener){
-                        if(automation.Listener.listener === 'MESSAGE'){
+                if (automation && automations_post && automation.Trigger) {
+                    if (automation.Listener) {
+                        if (automation.Listener.listener === 'MESSAGE') {
                             const direct_message = await sendPrivateMessage(
-                                webhook_payload.entry[0].id,
+                                automation.User?.Integrations[0].instagramId!,
                                 webhook_payload.entry[0].changes[0].value.id,
                                 automation.Listener?.prompt,
                                 automation.User?.Integrations[0].token!
                             )
-                            if(direct_message.status === 200){
+                            if (direct_message.status === 200) {
                                 const tracked = await trackResponses(automation.id, 'COMMENT')
 
-                                if(tracked){
+                                if (tracked) {
                                     return NextResponse.json(
                                         {
                                             message: 'Message sent'
-                                        }, 
-                                        {status:200}
+                                        },
+                                        { status: 200 }
                                     )
                                 }
                             }
                         }
-                        if(
+                        if (
                             automation.Listener.listener === 'SMARTAI' &&
                             automation.User?.Subscription?.plan === 'PRO'
-                        ){
+                        ) {
                             const smart_ai_message = await openai.chat.completions.create({
                                 model: 'gpt-4o',
-                                messages:[
+                                messages: [
                                     {
                                         role: 'assistant',
                                         content: `${automation.Listener?.prompt} : Keep responses under 2 sentences`,
                                     },
                                 ],
                             })
-                            if(smart_ai_message.choices[0].message.content){
-                               const reciever = createChatHistory(
+                            if (smart_ai_message.choices[0].message.content) {
+                                const reciever = createChatHistory(
                                     automation.id,
                                     webhook_payload.entry[0].id,
                                     webhook_payload.entry[0].changes[0].value.from.id,
-                                    webhook_payload.entry[0].chanes[0].value.text
+                                    webhook_payload.entry[0].changes[0].value.text
                                 )
 
                                 const sender = createChatHistory(
@@ -181,21 +181,21 @@ export async function POST(req:NextRequest){
                                 await client.$transaction([reciever, sender])
 
                                 const direct_message = await sendPrivateMessage(
-                                    webhook_payload.entry[0].id,
+                                    automation.User?.Integrations[0].instagramId!,
                                     webhook_payload.entry[0].changes[0].value.id,
                                     smart_ai_message.choices[0].message.content,
                                     automation.User?.Integrations[0].token!
                                 )
 
-                                if(direct_message.status === 200){
+                                if (direct_message.status === 200) {
                                     const tracked = await trackResponses(automation.id, 'COMMENT')
 
-                                    if(tracked){
+                                    if (tracked) {
                                         return NextResponse.json(
                                             {
-                                                message:'Message sent'
+                                                message: 'Message sent'
                                             },
-                                            {status:200}
+                                            { status: 200 }
                                         )
                                     }
                                 }
@@ -206,22 +206,22 @@ export async function POST(req:NextRequest){
             }
         }
 
-        if(!matcher){
+        if (!matcher) {
             const customer_history = await getChatHistory(
                 webhook_payload.entry[0].messaging[0].recipient.id,
                 webhook_payload.entry[0].messaging[0].sender.id
             )
 
-            if(customer_history.history.length > 0){
+            if (customer_history.history.length > 0) {
                 const automation = await findAutomation(customer_history.automationId!)
 
-                if( 
+                if (
                     automation?.User?.Subscription?.plan === 'PRO' &&
-                    automation.Listener?.listener === 'SMARTAI' 
-                ){
+                    automation.Listener?.listener === 'SMARTAI'
+                ) {
                     const smart_ai_message = await openai.chat.completions.create({
                         model: 'gpt-4o',
-                        messages:[
+                        messages: [
                             {
                                 role: 'assistant',
                                 content: `${automation.Listener?.prompt}: Keep responses under 2 sentences`,
@@ -234,7 +234,7 @@ export async function POST(req:NextRequest){
                         ]
                     })
 
-                    if(smart_ai_message.choices[0].message.content){
+                    if (smart_ai_message.choices[0].message.content) {
                         const reciever = createChatHistory(
                             automation.id,
                             webhook_payload.entry[0].id,
@@ -258,12 +258,12 @@ export async function POST(req:NextRequest){
                             automation.User?.Integrations[0].token!
                         )
 
-                        if(direct_message.status === 200){
+                        if (direct_message.status === 200) {
                             return NextResponse.json(
                                 {
                                     message: 'Message sent'
                                 },
-                                {status: 200}
+                                { status: 200 }
 
                             )
                         }
@@ -273,9 +273,9 @@ export async function POST(req:NextRequest){
 
             return NextResponse.json(
                 {
-                    message:'No automation set'
+                    message: 'No automation set'
                 },
-                {status: 200}
+                { status: 200 }
             )
         }
 
@@ -284,7 +284,7 @@ export async function POST(req:NextRequest){
                 message: 'No automation set',
             },
             {
-                status:200
+                status: 200
             }
         )
 

@@ -1,10 +1,10 @@
 import { client } from "@/lib/prisma"
 
 
-export const matchKeyword = async(keyword: string) => {
+export const matchKeyword = async (keyword: string) => {
     return await client.keyword.findFirst({
-        where:{
-            word:{
+        where: {
+            word: {
                 equals: keyword,
                 mode: 'insensitive',
             }
@@ -12,29 +12,30 @@ export const matchKeyword = async(keyword: string) => {
     })
 }
 
-export const getKeywordAutomation = async(automationId:string, dm:boolean) => {
+export const getKeywordAutomation = async (automationId: string, dm: boolean) => {
     return await client.automation.findUnique({
-        where:{
-            id:automationId,
+        where: {
+            id: automationId,
         },
-        include:{
-            Dms:dm,
-            Trigger:{
-                where:{
+        include: {
+            Dms: dm,
+            Trigger: {
+                where: {
                     type: dm ? 'DM' : 'COMMENT',
                 },
             },
             Listener: true,
-            User:{
-                select:{
-                    Subscription:{
-                        select:{
+            User: {
+                select: {
+                    Subscription: {
+                        select: {
                             plan: true,
                         },
                     },
-                    Integrations:{
-                        select:{
-                            token:true,
+                    Integrations: {
+                        select: {
+                            token: true,
+                            instagramId: true
                         },
                     },
                 },
@@ -44,24 +45,24 @@ export const getKeywordAutomation = async(automationId:string, dm:boolean) => {
 }
 
 
-export const trackResponses = async(automationId:string,type:'COMMENT' | 'DM') => {
-    if(type === 'COMMENT'){
+export const trackResponses = async (automationId: string, type: 'COMMENT' | 'DM') => {
+    if (type === 'COMMENT') {
         return await client.listener.update({
-            where:{ automationId},
+            where: { automationId },
             data: {
-                commentCount:{
-                    increment:1,
+                commentCount: {
+                    increment: 1,
                 }
             }
         })
     }
 
-    if(type === 'DM'){
+    if (type === 'DM') {
         return await client.listener.update({
-            where: {automationId},
-            data:{
-                dmCount:{
-                    increment:1,
+            where: { automationId },
+            data: {
+                dmCount: {
+                    increment: 1,
                 }
             }
         })
@@ -73,14 +74,14 @@ export const createChatHistory = (
     sender: string,
     reciever: string,
     message: string
-)=> {
+) => {
     return client.automation.update({
-        where:{
+        where: {
             id: automationId,
         },
-        data:{
-            Dms:{
-                create:{
+        data: {
+            Dms: {
+                create: {
                     reciever,
                     senderId: sender,
                     message,
@@ -90,30 +91,30 @@ export const createChatHistory = (
     })
 }
 
-export const getKeywordPost = async(postId:string, automationId:string) => {
+export const getKeywordPost = async (postId: string, automationId: string) => {
     return await client.post.findFirst({
-        where:{
-            AND:[{postid:postId}, {automationId}],
+        where: {
+            AND: [{ postid: postId }, { automationId }],
         },
-        select:{automationId:true},
+        select: { automationId: true },
     })
 }
 
-export const getChatHistory = async(sender:string, reciever:string) => {
+export const getChatHistory = async (sender: string, reciever: string) => {
     const history = await client.dms.findMany({
-        where:{
-            AND:[{senderId:sender},{reciever}],
+        where: {
+            AND: [{ senderId: sender }, { reciever }],
         },
-        orderBy:{createdAt:'asc'}
+        orderBy: { createdAt: 'asc' }
     })
 
     const chatSession: {
-        role:'assistant' | 'user'
+        role: 'assistant' | 'user'
         content: string
-    }[] = history.map((chat: any)=>{
+    }[] = history.map((chat: any) => {
         return {
-            role:chat.reciever ? 'assistant':'user',
-            content:chat.message!,
+            role: chat.reciever ? 'assistant' : 'user',
+            content: chat.message!,
         }
     })
 
