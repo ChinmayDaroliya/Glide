@@ -288,7 +288,8 @@ export async function POST(req: NextRequest) {
             }
         )
 
-    } catch (error) {
+    } catch (error: any) {
+        console.error("Webhook processing error:", error.response?.data || error.message || error)
         return NextResponse.json(
             {
                 message: 'No automation set'
