@@ -131,9 +131,10 @@ export async function POST(req: NextRequest) {
                 if (automation && automations_post && automation.Trigger) {
                     if (automation.Listener) {
                         if (automation.Listener.listener === 'MESSAGE') {
-                            const direct_message = await sendPrivateMessage(
+                            // Send DM to user who commented, not comment reply
+                            const direct_message = await sendDM(
                                 webhook_payload.entry[0].id,
-                                webhook_payload.entry[0].changes[0].value.id,
+                                webhook_payload.entry[0].changes[0].value.from.id,
                                 automation.Listener?.prompt,
                                 automation.User?.Integrations[0].token!
                             )
