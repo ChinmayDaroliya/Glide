@@ -128,7 +128,16 @@ export const onIntegrate = async (code: string, userId?: string) => {
             const page = me.data.accounts?.data?.[0]
             if (!page) return { status: 404 }
 
-            const pageAccessToken = page.access_token
+            // Get Instagram Business Account details
+            const instaBusiness = await axios.get(
+                `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${token.access_token}`
+            )
+
+            const instagramAccountId = instaBusiness.data.instagram_business_account?.id
+            if (!instagramAccountId) return { status: 404 }
+
+            // Use the original user token for Instagram API calls
+            const pageAccessToken = token.access_token
 
             const today = new Date()
             const expire_date = today.setDate(today.getDate() + 60)
