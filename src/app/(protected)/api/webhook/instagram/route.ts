@@ -132,9 +132,9 @@ export async function POST(req: NextRequest) {
                     if (automation.Listener) {
                         if (automation.Listener.listener === 'MESSAGE') {
                             // Send DM to user who commented, not comment reply
-                            const direct_message = await sendDM(
+                            const direct_message = await sendPrivateMessage(
                                 webhook_payload.entry[0].id,
-                                webhook_payload.entry[0].changes[0].value.from.id,
+                                webhook_payload.entry[0].changes[0].value.id,
                                 automation.Listener?.prompt,
                                 automation.User?.Integrations[0].token!
                             )
@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
                                 const direct_message = await sendPrivateMessage(
                                     webhook_payload.entry[0].id,
                                     webhook_payload.entry[0].changes[0].value.id,
-                                    smart_ai_message.choices[0].message.content,
+                                    automation.Listener?.prompt,
                                     automation.User?.Integrations[0].token!
                                 )
 

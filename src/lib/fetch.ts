@@ -23,7 +23,7 @@ export const sendDM = async (
 ) => {
   console.log('sending message')
   return await axios.post(
-    `https://graph.facebook.com/v21.0/${userId}/messages`,
+    `${process.env.INSTAGRAM_BASE_URL}/v21.0/${userId}/messages`,
     {
       recipient: {
         id: recieverId,
@@ -47,63 +47,24 @@ export const sendPrivateMessage = async (
   prompt: string,
   token: string
 ) => {
-  console.log('sending comment reply')
-  console.log('API Call Details:', {
-    endpoint: `https://graph.facebook.com/v21.0/${userId}/messages`,
-    recipientId: recieverId,
-    hasToken: !!token
-  })
-  
-  try {
-    // For Instagram comment replies, use the correct API structure
-    const response = await axios.post(
-      `https://graph.facebook.com/v21.0/me/messages`,
-      {
-        recipient: {
-          comment_id: recieverId,
-        },
-        message: {
-          text: prompt,
-        },
+  console.log('sending message')
+  return await axios.post(
+    `${process.env.INSTAGRAM_BASE_URL}/${userId}/messages`,
+    {
+      recipient: {
+        comment_id: recieverId,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-    console.log('Comment reply sent successfully:', response.status)
-    return response
-  } catch (error: any) {
-    console.log('Error sending comment reply:', error.response?.data || error.message)
-    
-    // Try alternative endpoint for Instagram messages
-    try {
-      const fallbackResponse = await axios.post(
-        `https://graph.facebook.com/v21.0/${userId}/messages`,
-        {
-          recipient: {
-            comment_id: recieverId,
-          },
-          message: {
-            text: prompt,
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      console.log('Fallback API call successful:', fallbackResponse.status)
-      return fallbackResponse
-    } catch (fallbackError: any) {
-      console.log('Both API calls failed:', fallbackError.response?.data || fallbackError.message)
-      throw fallbackError
+      message: {
+        text: prompt,
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     }
-  }
+  )
 }
 
 export const generateTokens = async (code: string) => {
