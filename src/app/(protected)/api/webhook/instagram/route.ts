@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
                     if (automation.Listener) {
                         if (automation.Listener.listener === 'MESSAGE') {
                             const direct_message = await sendPrivateMessage(
-                                automation.User?.Integrations[0].instagramId!,
+                                webhook_payload.entry[0].id,
                                 webhook_payload.entry[0].changes[0].value.id,
                                 automation.Listener?.prompt,
                                 automation.User?.Integrations[0].token!
@@ -181,7 +181,7 @@ export async function POST(req: NextRequest) {
                                 await client.$transaction([reciever, sender])
 
                                 const direct_message = await sendPrivateMessage(
-                                    automation.User?.Integrations[0].instagramId!,
+                                    webhook_payload.entry[0].id,
                                     webhook_payload.entry[0].changes[0].value.id,
                                     smart_ai_message.choices[0].message.content,
                                     automation.User?.Integrations[0].token!
