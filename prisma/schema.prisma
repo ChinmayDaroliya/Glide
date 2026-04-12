@@ -37,7 +37,7 @@ model Integrations {
   userId      String?      @db.Uuid
   token       String       @unique
   expiresAt   DateTime?
-  instagramId String?      @unique
+  instagramId String?
   User        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
