@@ -128,7 +128,7 @@ export const onIntegrate = async (code: string, userId?: string) => {
             const page = me.data.accounts?.data?.[0]
             if (!page) return { status: 404 }
 
-            const pageAccessToken = token.access_token
+            const pageAccessToken = page.access_token
 
             const today = new Date()
             const expire_date = today.setDate(today.getDate() + 60)
