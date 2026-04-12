@@ -61,7 +61,17 @@ const PostButton = ({ id }: Props) => {
                     </Button>
                 </div>
             ) : (
-                <p className='text-text-secondary text-center'>No posts found</p>
+                <div className='flex flex-col gap-y-3 w-full text-center'>
+                    <p className='text-text-secondary'>No posts found</p>
+                    {/* Render the error message gracefully so you can see exactly why it fails */}
+                    {data?.status !== 200 && data?.message && (
+                        <div className='bg-red-50 p-3 rounded-md border border-red-200 mt-2 text-left'>
+                            <p className='text-xs text-red-600 font-mono break-words whitespace-pre-wrap'>
+                                Error: {typeof data.message === 'string' ? data.message : JSON.stringify(data.message)}
+                            </p>
+                        </div>
+                    )}
+                </div>
             )}
         </TriggerButton>
     )

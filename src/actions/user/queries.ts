@@ -16,6 +16,7 @@ export const findUser = async (
                     token: true,
                     expiresAt: true,
                     name: true,
+                    instagramId: true,
                 },
             },
         },

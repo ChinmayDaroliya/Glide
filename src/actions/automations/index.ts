@@ -134,9 +134,17 @@ export const getProfilePosts = async () => {
             console.log("No Instagram integration found")
             return { status: 404, message: "No Instagram integration found" }
         }
+        const integration = profile.Integrations.find(
+            (i: any) => i.instagramId
+        )
 
-        const token = (profile.Integrations[0] as any).token
-        const instagramId = (profile.Integrations[0] as any).instagramId
+        if (!integration) {
+            console.log("No Instagram integration found")
+            return { status: 404 }
+        }
+
+        const token = integration.token
+        const instagramId = integration.instagramId
         if (!token || !instagramId) {
             console.log("No access token or instagram id found")
             return { status: 404, message: "No access token or instagram id found" }
@@ -153,13 +161,12 @@ export const getProfilePosts = async () => {
         )
         const parsed = posts.data?.data
         if (parsed) return { status: 200, data: parsed }
-        console.log("error in getting posts")
-        return { status: 404 }
+        console.log("error in getting posts, empty parsed data")
+        return { status: 404, message: "Parsed data is empty" }
 
-    } catch (error) {
-        console.log('server side error in getting the posts')
-        return { status: 500 }
-
+    } catch (error: any) {
+        console.error('server side error in getting the posts', error.response?.data || error.message)
+        return { status: 500, message: error.response?.data ? JSON.stringify(error.response.data) : error.message }
     }
 }
 

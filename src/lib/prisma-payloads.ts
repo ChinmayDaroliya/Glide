@@ -35,5 +35,6 @@ export interface UserWithProfile {
     token: string
     expiresAt: Date | null
     name: string
+    instagramId: string | null
   }>
 }
