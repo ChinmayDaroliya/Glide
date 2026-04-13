@@ -101,24 +101,38 @@ export const sendPrivateMessage = async (
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
+  // Step 1: exchange code → user token (EAA)
   const res = await fetch(
-    "https://api.instagram.com/oauth/access_token",
-    {
-      method: "POST",
-      body: new URLSearchParams({
-        client_id: process.env.INSTAGRAM_CLIENT_ID!,
-        client_secret: process.env.INSTAGRAM_CLIENT_SECRET!,
-        grant_type: "authorization_code",
-        redirect_uri: redirectUri,
-        code,
-      }),
-    }
+    `https://graph.facebook.com/v21.0/oauth/access_token` +
+      `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
+      `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&code=${code}` +
+      `&grant_type=authorization_code`
   )
 
   const data = await res.json()
+  if (!data.access_token) return null
+
+  // Step 2: exchange → Instagram messaging token (IGAA)
+  const igRes = await fetch(
+    `https://graph.instagram.com/access_token` +
+      `?grant_type=ig_exchange_token` +
+      `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
+      `&access_token=${data.access_token}`
+  )
+
+  const igToken = await igRes.json()
+
+  // Step 3: get IG user id
+  const igUser = await fetch(
+    `https://graph.instagram.com/me?fields=user_id,username&access_token=${igToken.access_token}`
+  )
+
+  const igData = await igUser.json()
 
   return {
-    access_token: data.access_token, // this will be IGAA
-    instagramId: data.user_id
+    access_token: igToken.access_token, // IGAA token
+    instagramId: igData.user_id
   }
 }
