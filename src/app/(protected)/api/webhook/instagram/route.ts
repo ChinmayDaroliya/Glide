@@ -89,6 +89,11 @@ export async function POST(req: NextRequest) {
 
     const listener = automation?.Listener
 
+    console.log(
+    "COMMENT MEDIA",
+    webhook_payload.entry[0].changes[0].value.media.id
+    )
+
     const automations_post = await getKeywordPost(
         webhook_payload.entry[0].changes[0].value.media.id,
         automation?.id!
@@ -99,7 +104,7 @@ export async function POST(req: NextRequest) {
         automations_post
     })
 
-    if (automation && automation.Trigger?.length) {
+    if (automation && automation.Trigger?.length && automations_post) {
         if (listener && listener.listener === 'MESSAGE') {
 
             console.log("SENDING DM", {
