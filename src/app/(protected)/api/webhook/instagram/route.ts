@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { openai } from '@/lib/openai'
 import { client } from "@/lib/prisma";
 import { findAutomation } from "@/actions/automations/queries";
+import { id } from "date-fns/locale";
 
 export async function GET(req: NextRequest) {
     const hub = req.nextUrl.searchParams.get("hub.challenge")
