@@ -22,26 +22,22 @@ export const sendDM = async (
   token: string
 ) => {
   console.log('sending DM to user')
-  console.log('DM Details:', {
-    userId,
-    recieverId,
-    hasToken: !!token
-  })
+
   return await axios.post(
-    `https://graph.facebook.com/v21.0/${userId}/messages`,
+    "https://graph.instagram.com/v25.0/me/messages",
     {
       recipient: {
-        id: recieverId,
+        id: recieverId
       },
       message: {
-        text: prompt,
-      },
+        text: prompt
+      }
     },
     {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+        "Content-Type": "application/json"
+      }
     }
   )
 }
@@ -52,22 +48,23 @@ export const sendPrivateMessage = async (
   prompt: string,
   token: string
 ) => {
-  console.log('sending comment private reply')
-  console.log('Private reply details:', {
-    commentId: recieverId,
-    hasToken: !!token
-  })
+  console.log("sending comment reply")
 
   return await axios.post(
-    `https://graph.facebook.com/v21.0/${recieverId}/private_replies`,
+    "https://graph.instagram.com/v25.0/me/messages",
     {
-      message: prompt
+      recipient: {
+        comment_id: recieverId
+      },
+      message: {
+        text: prompt
+      }
     },
     {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+        "Content-Type": "application/json"
+      }
     }
   )
 }
