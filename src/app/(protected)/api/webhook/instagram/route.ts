@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
                         })
 
                         const direct_message = await sendDM(
-                            webhook_payload.entry[0].id,
+                            automation.User?.Integrations[0].instagramId!,
                             webhook_payload.entry[0].messaging[0].sender.id,
                             listener?.prompt,
                             automation.User?.Integrations[0].token!,

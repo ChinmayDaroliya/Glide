@@ -73,22 +73,41 @@ export const sendPrivateMessage = async (
   )
 }
 
+
+
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
+  // Step 1 — exchange code for user token
   const res = await fetch(
     `https://graph.facebook.com/v21.0/oauth/access_token` +
-    `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
-    `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
-    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&code=${code}` +
-    `&grant_type=authorization_code`
+      `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
+      `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&code=${code}` +
+      `&grant_type=authorization_code`
   )
 
   const data = await res.json()
-
   if (!data.access_token) return null
 
-  // IMPORTANT: do NOT exchange again
-  return data
+  // Step 2 — get pages
+  const pagesRes = await fetch(
+    `https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${data.access_token}`
+  )
+
+  const pages = await pagesRes.json()
+
+  const page = pages.data?.find(
+    (p: any) => p.instagram_business_account
+  )
+
+  if (!page) return null
+
+  // Step 3 — return page token + ig id
+  return {
+    access_token: page.access_token,
+    instagramId: page.instagram_business_account.id,
+    pageId: page.id
+  }
 }
