@@ -1,0 +1,86 @@
+[33md35a510[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m implemented some windsurf changes
+[33mb5ea659[m send dm operations
+[33m359d8f4[m revert back
+[33m98b577b[m updated fetch
+[33m37aa18f[m final flipping
+[33m1e07649[m removed private message and used only send dm
+[33m7b44e3f[m trying to temp bypass the send dm
+[33m8bd387d[m added page id in send private message
+[33mfe8e5c0[m added logs in webhook to see the issue
+[33maa81840[m change pageAccessToken
+[33m2cde7d9[m webhook instagram updated
+[33m6edf501[m did more changes too the code in webhhok insta
+[33m765f215[m updated the route of webhook
+[33mb050e02[m added logs to see the issue in dm
+[33m1b3500c[m reverted back to old private mdg code
+[33ma14a3a5[m changed the way page token was getting stored
+[33mdd7037a[m corrected the sendPrivateMessage code from fetch
+[33me23026e[m send private message not working
+[33mfe4aec1[m corrected the sendPrivateMessageCode
+[33m54d8741[m post not found ,updated code
+[33m1840746[m attach post fixed
+[33mcccbd17[m get post correction and removing unique insta id from db
+[33m31e6a22[m corrected the access token
+[33macf496d[m generate token edited
+[33mee6190c[m the page error persists
+[33m66c99da[m removed the user page part
+[33mff1d707[m updated generate token and onIntegrate
+[33m64ddbd4[m no pages was showing fixed
+[33m5009450[m updated the env and added safe check
+[33ma92a39b[m page access token added to update and create
+[33m169e1bb[m update the page.tsx in callback insta
+[33m318906e[m token was not getting generated
+[33m67a3725[m getTokens code updated
+[33m414b761[m extra addition in oAuthInstagram
+[33m26fb351[m changes in onIntegrate func inside actions/integrations/index.ts
+[33ma263fb2[m updated the callback insta page code
+[33med1aed9[m build error for deleting file
+[33m5c5a6e9[m added callback page
+[33me1b92b2[m automation error solved
+[33m4df9d31[m Reconnect
+[33m7669fb3[m implemented reconnect logic
+[33m67f0fac[m solved routing issue in dashboard
+[33mcb681d9[m solved the build errors
+[33mdf50285[m getting vercel build error
+[33m105d350[m build error
+[33m6a01bad[m next protection issue
+[33m3322a53[m solved more build error
+[33m443c31e[m solved the build error
+[33mb4898dc[m trying to solve the build error
+[33ma069eeb[m removed page.tsx for callback insta and added route.ts with a get
+[33mb12f339[m did some changes in the callback URI
+[33mab400d1[m testing for facebook login page
+[33m00887e3[m added some console to check the error
+[33mef3f9ff[m removed salesforce option in integrations
+[33mbd3ccc9[m corrected the oauth integration
+[33m553d817[m corrected the redirect insta url
+[33m405b709[m solved the integration naming issue and slug name in home page
+[33m3711db8[m postinstall script fix
+[33m8b0b0dd[m fixed build bugs
+[33m9424c23[m added delete button for automations and corrected the automation naming part
+[33m6f3a499[m automations testing : comments stuff is working
+[33ma9eda27[m creating  Instagram Webhooks and OAuth
+[33m4a555cf[m completed payments and subscriptions
+[33m8aacb06[m activating automations , the button to show active and disabled
+[33m8e8d73a[m getting posts from user instagram profile | insta api isn't setup
+[33m4c2e623[m setting up keywords to trigger the automations
+[33m57ab540[m setting up actions / listeners for automations
+[33m7f5b468[m setting up triggers for automations
+[33mbdd7ea7[m started implementing trigger and redux
+[33m33b907f[m WIP creating and prefetching automations
+[33m523ca2e[m implemented react query
+[33m21ae87a[m updated the dashboard page and redirect when not sign-in
+[33m329b8ab[m created automations component
+[33m94bc88e[m created integrations portal on mainbreadcrumb
+[33m7d95cde[m created settings page and paymentCard in it
+[33m700f04f[m create the search ui and create automation button and mainbreadcrumb page layout
+[33m7753d6e[m created sidebar and sheet tab
+[33m54b170c[m added global components like loader , toaster and protected routes in dashboard/slug and working on side nav bar
+[33m8f9904c[m created the prisma schema and setup in neon dev database also made prisma.ts in lib
+[33mb1b3a5f[m Fix gitignore and remove .env from tracking
+[33m7b6783a[m .env removed
+[33mb2cea8c[m added example env
+[33mb27ce83[m added clerk API in env , implemented the clerk authentication (sign-in/up) and added theme-provider from shadcn and toaster from shadcn
+[33m1167a51[m Implemented a  hero section in home page
+[33m05a47fe[m feat: initial commit
+[33mbd5ca2d[m feat: initial commit
