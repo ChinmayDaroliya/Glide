@@ -52,17 +52,16 @@ export const sendPrivateMessage = async (
   prompt: string,
   token: string
 ) => {
-  console.log('sending message')
+  console.log('sending comment private reply')
+  console.log('Private reply details:', {
+    commentId: recieverId,
+    hasToken: !!token
+  })
+
   return await axios.post(
-    `${process.env.INSTAGRAM_BASE_URL}/${userId}/messages`,
+    `https://graph.facebook.com/v21.0/${recieverId}/private_replies`,
     {
-      messaging_type: "RESPONSE",
-      recipient: {
-        comment_id: recieverId,
-      },
-      message: {
-        text: prompt,
-      },
+      message: prompt
     },
     {
       headers: {
