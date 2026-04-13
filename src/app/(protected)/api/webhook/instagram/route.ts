@@ -92,8 +92,12 @@ export async function POST(req: NextRequest) {
                     webhook_payload.entry[0].changes[0].value.media.id,
                     automation?.id!
                 )
+                console.log("POST MATCH CHECK", {
+                    mediaId: webhook_payload.entry[0].changes[0].value.media.id,
+                    automations_post
+                })
 
-                if (automation && automations_post && automation.Trigger?.length) {
+                if (automation && automation.Trigger?.length) {
                     if (listener && listener.listener === 'MESSAGE') {
 
                         console.log("SENDING DM", {
