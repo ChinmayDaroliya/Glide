@@ -78,7 +78,6 @@ export const sendPrivateMessage = async (
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
-  // Step 1 — exchange code for user token
   const res = await fetch(
     `https://graph.facebook.com/v21.0/oauth/access_token` +
       `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
@@ -91,23 +90,14 @@ export const generateTokens = async (code: string) => {
   const data = await res.json()
   if (!data.access_token) return null
 
-  // Step 2 — get pages
-  const pagesRes = await fetch(
-    `https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${data.access_token}`
+  const ig = await fetch(
+    `https://graph.facebook.com/v21.0/me?fields=user_id,username&access_token=${data.access_token}`
   )
 
-  const pages = await pagesRes.json()
+  const igData = await ig.json()
 
-  const page = pages.data?.find(
-    (p: any) => p.instagram_business_account
-  )
-
-  if (!page) return null
-
-  // Step 3 — return page token + ig id
   return {
-    access_token: page.access_token,
-    instagramId: page.instagram_business_account.id,
-    pageId: page.id
+    access_token: data.access_token,
+    instagramId: igData.user_id
   }
 }
