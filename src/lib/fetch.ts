@@ -101,7 +101,6 @@ export const sendPrivateMessage = async (
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
-  // Step 1: exchange code → user token (EAA)
   const res = await fetch(
     `https://graph.facebook.com/v21.0/oauth/access_token` +
       `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
@@ -114,25 +113,14 @@ export const generateTokens = async (code: string) => {
   const data = await res.json()
   if (!data.access_token) return null
 
-  // Step 2: exchange → Instagram messaging token (IGAA)
-  const igRes = await fetch(
-    `https://graph.instagram.com/access_token` +
-      `?grant_type=ig_exchange_token` +
-      `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
-      `&access_token=${data.access_token}`
+  const ig = await fetch(
+    `https://graph.facebook.com/v21.0/me?fields=user_id,username&access_token=${data.access_token}`
   )
 
-  const igToken = await igRes.json()
-
-  // Step 3: get IG user id
-  const igUser = await fetch(
-    `https://graph.instagram.com/me?fields=user_id,username&access_token=${igToken.access_token}`
-  )
-
-  const igData = await igUser.json()
+  const igData = await ig.json()
 
   return {
-    access_token: igToken.access_token, // IGAA token
+    access_token: data.access_token,
     instagramId: igData.user_id
   }
 }
