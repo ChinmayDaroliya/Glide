@@ -56,6 +56,7 @@ export const sendPrivateMessage = async (
   return await axios.post(
     `${process.env.INSTAGRAM_BASE_URL}/${userId}/messages`,
     {
+      messaging_type: "RESPONSE",
       recipient: {
         comment_id: recieverId,
       },
