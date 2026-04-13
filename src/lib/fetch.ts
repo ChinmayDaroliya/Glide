@@ -21,9 +21,14 @@ export const sendDM = async (
   prompt: string,
   token: string
 ) => {
-  console.log('sending message')
+  console.log('sending DM to user')
+  console.log('DM Details:', {
+    userId,
+    recieverId,
+    hasToken: !!token
+  })
   return await axios.post(
-    `${process.env.INSTAGRAM_BASE_URL}/v21.0/${userId}/messages`,
+    `https://graph.facebook.com/v21.0/${userId}/messages`,
     {
       recipient: {
         id: recieverId,
