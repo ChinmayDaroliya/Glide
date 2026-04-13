@@ -25,16 +25,6 @@ export const onOAuthInstagram = async (strategy: 'INSTAGRAM' | 'CRM') => {
         const clientId = process.env.INSTAGRAM_CLIENT_ID
         const redirectUri = getInstagramRedirectUri()
 
-        console.log('\n' + '='.repeat(50))
-        console.log('=== INSTAGRAM OAUTH INITIATION ===')
-        console.log('='.repeat(50))
-        console.log('OAuth Init: Client ID:', clientId ? 'SET' : 'MISSING')
-        console.log('OAuth Init: Redirect URI:', redirectUri)
-        console.log('OAuth Init: Scope:', process.env.INSTAGRAM_OAUTH_SCOPE || 'DEFAULT_SCOPE')
-        console.log('='.repeat(50) + '\n')
-
-        // Use Facebook Login permission names (not instagram_business_*), which are for Business Login for Instagram.
-        // See: https://developers.facebook.com/docs/facebook-login/permissions
         const scope = process.env.INSTAGRAM_OAUTH_SCOPE ??
             'instagram_basic,instagram_manage_messages,instagram_manage_comments,pages_show_list,pages_read_engagement'
 
@@ -53,16 +43,12 @@ export const onOAuthInstagram = async (strategy: 'INSTAGRAM' | 'CRM') => {
             'extras',
             JSON.stringify({ setup: { channel: 'IG_API_ONBOARDING' } })
         )
-        oauthUrl.searchParams.set('auth_type', 'rerequest')
 
         return redirect(oauthUrl.toString())
     }
 }
 
 export const onIntegrate = async (code: string, userId?: string) => {
-    console.log('\n' + '='.repeat(50))
-    console.log('=== INSTAGRAM INTEGRATION PROCESS STARTED ===')
-    console.log('='.repeat(50))
 
     let user: { id: string }
     if (userId) {
@@ -74,38 +60,34 @@ export const onIntegrate = async (code: string, userId?: string) => {
     try {
         const integration = await getIntegration(user.id)
 
-        // CREATE NEW
+        const token = await generateTokens(code)
+        if (!token) return { status: 401 }
+
+        // IMPORTANT: include access_token
+        const me = await axios.get(
+            `https://graph.facebook.com/v21.0/me?fields=accounts{instagram_business_account,name,id,access_token}&access_token=${token.access_token}`
+        )
+
+        const page = me.data.accounts?.data?.[0]
+
+        if (!page) {
+            console.log("No page found")
+            return { status: 404 }
+        }
+
+        const igId = page.instagram_business_account?.id
+        const pageAccessToken = page.access_token
+
+        if (!igId || !pageAccessToken) {
+            console.log("No instagram account or token")
+            return { status: 404 }
+        }
+
+        const today = new Date()
+        const expire_date = today.setDate(today.getDate() + 60)
+
+        // CREATE
         if (integration && integration.Integrations.length === 0) {
-            const token = await generateTokens(code)
-            if (!token) return { status: 401 }
-
-            // ✅ FINAL CORRECT FLOW
-            const me = await axios.get(
-                `https://graph.facebook.com/v21.0/me?fields=accounts{instagram_business_account,name,id}&access_token=${token.access_token}`
-            )
-
-            const page = me.data.accounts?.data?.[0]
-
-            if (!page) {
-                console.log("No page found")
-                return { status: 404 }
-            }
-
-            const pageId = page.id
-            const igId = page.instagram_business_account?.id
-            const pageAccessToken = token.access_token
-
-            if (!igId) {
-                console.log("No instagram account connected")
-                return { status: 404 }
-            }
-
-            console.log("Page ID:", pageId)
-            console.log("Instagram ID:", igId)
-
-            const today = new Date()
-            const expire_date = today.setDate(today.getDate() + 60)
-
             const create = await createIntegration(
                 user.id,
                 pageAccessToken,
@@ -116,31 +98,8 @@ export const onIntegrate = async (code: string, userId?: string) => {
             return { status: 200, data: create }
         }
 
-        // UPDATE EXISTING
+        // UPDATE
         if (integration && integration.Integrations.length > 0) {
-            const token = await generateTokens(code)
-            if (!token) return { status: 401 }
-
-            const me = await axios.get(
-                `https://graph.facebook.com/v21.0/me?fields=accounts{instagram_business_account,name,id}&access_token=${token.access_token}`
-            )
-
-            const page = me.data.accounts?.data?.[0]
-            if (!page) return { status: 404 }
-
-            // Get Instagram Business Account details
-            const instaBusiness = await axios.get(
-                `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${token.access_token}`
-            )
-
-            const instagramAccountId = instaBusiness.data.instagram_business_account?.id
-            if (!instagramAccountId) return { status: 404 }
-
-            // Use the original user token for Instagram API calls
-            const pageAccessToken = token.access_token
-
-            const today = new Date()
-            const expire_date = today.setDate(today.getDate() + 60)
 
             const update = await updateIntegrations(
                 pageAccessToken,
