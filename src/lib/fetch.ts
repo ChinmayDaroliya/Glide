@@ -71,29 +71,54 @@ export const sendPrivateMessage = async (
 
 
 
+// export const generateTokens = async (code: string) => {
+//   const redirectUri = getInstagramRedirectUri()
+
+//   const res = await fetch(
+//     `https://graph.facebook.com/v21.0/oauth/access_token` +
+//       `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
+//       `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
+//       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+//       `&code=${code}` +
+//       `&grant_type=authorization_code`
+//   )
+
+//   const data = await res.json()
+//   if (!data.access_token) return null
+
+//   const ig = await fetch(
+//     `https://graph.facebook.com/v21.0/me?fields=user_id,username&access_token=${data.access_token}`
+//   )
+
+//   const igData = await ig.json()
+
+//   return {
+//     access_token: data.access_token,
+//     instagramId: igData.user_id
+//   }
+// }
+
 export const generateTokens = async (code: string) => {
   const redirectUri = getInstagramRedirectUri()
 
   const res = await fetch(
-    `https://graph.facebook.com/v21.0/oauth/access_token` +
-      `?client_id=${process.env.INSTAGRAM_CLIENT_ID}` +
-      `&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&code=${code}` +
-      `&grant_type=authorization_code`
+    "https://api.instagram.com/oauth/access_token",
+    {
+      method: "POST",
+      body: new URLSearchParams({
+        client_id: process.env.INSTAGRAM_CLIENT_ID!,
+        client_secret: process.env.INSTAGRAM_CLIENT_SECRET!,
+        grant_type: "authorization_code",
+        redirect_uri: redirectUri,
+        code,
+      }),
+    }
   )
 
   const data = await res.json()
-  if (!data.access_token) return null
-
-  const ig = await fetch(
-    `https://graph.facebook.com/v21.0/me?fields=user_id,username&access_token=${data.access_token}`
-  )
-
-  const igData = await ig.json()
 
   return {
-    access_token: data.access_token,
-    instagramId: igData.user_id
+    access_token: data.access_token, // this will be IGAA
+    instagramId: data.user_id
   }
 }
