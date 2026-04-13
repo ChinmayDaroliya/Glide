@@ -77,56 +77,57 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            if (
-                webhook_payload.entry[0].changes &&
-                webhook_payload.entry[0].changes[0].field === "comments"
-            ) {
-                const automation = await getKeywordAutomation(
-                    matcher.automationId,
-                    false
-                )
+          if (
+    webhook_payload.entry[0].changes &&
+    webhook_payload.entry[0].changes[0].field === "comments"
+) {
+    const automation = await getKeywordAutomation(
+        matcher.automationId,
+        false
+    )
 
-                const listener = automation?.Listener
+    const listener = automation?.Listener
 
-                const automations_post = await getKeywordPost(
-                    webhook_payload.entry[0].changes[0].value.media.id,
-                    automation?.id!
-                )
-                console.log("POST MATCH CHECK", {
-                    mediaId: webhook_payload.entry[0].changes[0].value.media.id,
-                    automations_post
-                })
+    const automations_post = await getKeywordPost(
+        webhook_payload.entry[0].changes[0].value.media.id,
+        automation?.id!
+    )
 
-                if (automation && automation.Trigger?.length) {
-                    if (listener && listener.listener === 'MESSAGE') {
+    console.log("POST MATCH CHECK", {
+        mediaId: webhook_payload.entry[0].changes[0].value.media.id,
+        automations_post
+    })
 
-                        console.log("SENDING DM", {
-                            type: "COMMENT",
-                            commentId: webhook_payload.entry[0].changes[0].value.id,
-                            prompt: listener?.prompt,
-                            token: automation.User?.Integrations[0].token?.slice(0, 10)
-                        })
+    if (automation && automation.Trigger?.length) {
+        if (listener && listener.listener === 'MESSAGE') {
 
-                        const direct_message = await sendDM(
-                            automation.User?.Integrations[0].instagramId!,
-                            webhook_payload.entry[0].changes[0].value.from.id,
-                            listener?.prompt,
-                            automation.User?.Integrations[0].token!
-                        )
+            console.log("SENDING DM", {
+                type: "COMMENT",
+                commentId: webhook_payload.entry[0].changes[0].value.id,
+                prompt: listener?.prompt,
+                token: automation.User?.Integrations[0].token?.slice(0, 10)
+            })
 
-                        if (direct_message.status === 200) {
-                            const tracked = await trackResponses(automation.id, 'COMMENT')
+            const direct_message = await sendPrivateMessage(
+                automation.User?.Integrations[0].instagramId!,
+                webhook_payload.entry[0].changes[0].value.id,
+                listener?.prompt,
+                automation.User?.Integrations[0].token!
+            )
 
-                            if (tracked) {
-                                return NextResponse.json(
-                                    { message: 'Message sent' },
-                                    { status: 200 }
-                                )
-                            }
-                        }
-                    }
+            if (direct_message.status === 200) {
+                const tracked = await trackResponses(automation.id, 'COMMENT')
+
+                if (tracked) {
+                    return NextResponse.json(
+                        { message: 'Message sent' },
+                        { status: 200 }
+                    )
                 }
             }
+        }
+    }
+}
         }
 
         return NextResponse.json(
