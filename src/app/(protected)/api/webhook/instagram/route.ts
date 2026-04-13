@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
                         })
 
                         const direct_message = await sendPrivateMessage(
-                            webhook_payload.entry[0].id,
+                            automation.User?.Integrations[0].instagramId!,
                             webhook_payload.entry[0].changes[0].value.id,
                             listener?.prompt,
                             automation.User?.Integrations[0].token!
