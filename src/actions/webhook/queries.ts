@@ -92,11 +92,11 @@ export const createChatHistory = (
 }
 
 export const getKeywordPost = async (postId: string, automationId: string) => {
-    return await client.post.findFirst({
+       return await client.post.findFirst({
         where: {
-            AND: [{ postid: postId }, { automationId }],
+            automationId,
+            postid: postId,
         },
-        select: { automationId: true },
     })
 }
 

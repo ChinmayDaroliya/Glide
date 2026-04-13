@@ -94,17 +94,22 @@ export async function POST(req: NextRequest) {
     webhook_payload.entry[0].changes[0].value.media.id
     )
 
-    const automations_post = await getKeywordPost(
-        webhook_payload.entry[0].changes[0].value.media.id,
-        automation?.id!
-    )
+    const automationFull = await findAutomation(matcher.automationId)
 
-    console.log("POST MATCH CHECK", {
-        mediaId: webhook_payload.entry[0].changes[0].value.media.id,
-        automations_post
+    const mediaId = webhook_payload.entry[0].changes[0].value.media.id
+
+    console.log("CHECK POST", {
+    mediaId,
+    posts: automationFull?.Post
     })
 
-    if (automation && automation.Trigger?.length && automations_post) {
+
+    const postMatch = automationFull?.Post?.some(
+    post => post.postid === mediaId
+    )
+
+    
+    if (automation && automation.Trigger?.length && postMatch) {
         if (listener && listener.listener === 'MESSAGE') {
 
             console.log("SENDING DM", {
