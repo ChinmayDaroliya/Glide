@@ -1,6 +1,6 @@
 # Glide - Instagram Automation Platform
 
-![Glide Logo](https://via.placeholder.com/150x50/000000/FFFFFF?text=GLIDE)
+![Glide Logo](./public/glide-icon.png)
 
 **Transform Your Instagram Engagement with Intelligent Automation**
 
@@ -41,27 +41,27 @@ Glide is a powerful Instagram automation platform that helps content creators, b
 ## **Screenshots**
 
 ### **Landing Page**
-![Landing Page](/landing%20page.png)
+![Landing Page](./public/landing-page.png)
 *Modern gradient design with clear value proposition and pricing*
 
 ### **Dashboard**
-![Dashboard](/home%20page.png)
+![Dashboard](./public/home-page.png)
 *Comprehensive analytics with metrics charts and activity tracking*
 
 ### **Automation Page**
-![Automation Page](/automation%20page.png)
+![Automation Page](./public/automation-page.png)
 *Create and manage Instagram automation workflows*
 
 ### **Integration Page**
-![Integration Page](/integration%20page.png)
+![Integration Page](./public/integration-page.png)
 *Connect and manage your Instagram Business Account*
 
 ### **Settings Page**
-![Settings Page](/settings%20page.png)
+![Settings Page](./public/settings-page.png)
 *Account settings and subscription management*
 
 ### **Payment Page**
-![Payment Page](/stripe%20page.png)
+![Payment Page](./public/stripe-page.png)
 *Secure Stripe checkout for subscription upgrades*
 
 ---
