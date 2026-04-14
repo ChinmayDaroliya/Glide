@@ -32,9 +32,7 @@ export const onOAuthInstagram = async (strategy: 'INSTAGRAM' | 'CRM') => {
             throw new Error("Missing Instagram OAuth environment variables")
         }
 
-        // const oauthUrl = new URL('https://www.facebook.com/v21.0/dialog/oauth')
-        // lets try insta api
-        const oauthUrl = new URL('https://api.instagram.com/oauth/authorize')
+        const oauthUrl = new URL('https://www.facebook.com/v21.0/dialog/oauth')
         oauthUrl.searchParams.set('client_id', clientId)
         oauthUrl.searchParams.set('redirect_uri', redirectUri)
         oauthUrl.searchParams.set('scope', scope)
