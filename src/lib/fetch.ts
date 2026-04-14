@@ -98,7 +98,7 @@ export const sendPrivateMessage = async (
 //   }
 // }
 
-// new working code this generates long lived IAA token
+// new working code this generates short lived EAA token
 // export const generateTokens = async (code: string) => {
 //   const redirectUri = getInstagramRedirectUri()
 
@@ -150,7 +150,7 @@ export const generateTokens = async (code: string) => {
   const data = await res.json()
 
   return {
-    access_token: data.access_token, // IGAA token
+    access_token: data.access_token, // IGAA
     instagramId: data.user_id
   }
 }
