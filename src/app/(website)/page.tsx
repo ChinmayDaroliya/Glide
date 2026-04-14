@@ -83,7 +83,7 @@ export default function Home() {
                   size="lg"
                   className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all h-14 px-10 text-lg rounded-full"
                 >
-                  Get Started
+                  <Link href="/sign-up">Get Started</Link>
                 </Button>
                 <Button
                   size="lg"
